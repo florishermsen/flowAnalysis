@@ -134,8 +134,6 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    fPhiDistribution->SetParName(6,"Hexagonal Flow (v6)");
    fPhiDistribution->SetParameter(6,fV6);
 
-   std::cout << typeid(fPhiDistribution).name() << '\n';
-
 } // end of void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
 //====================================================================================================================
@@ -223,9 +221,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       // Eta-dependent v1 magic:
       Double_t generateEta = gRandom->Uniform(fEtaMin,fEtaMax);
       pTrack->SetEta(generateEta);
-      //fPhiDistribution->SetParameter(1,generateEta*fV1);
-
-      //fPhiDistribution->SetParameter(1,fV1);
+      fPhiDistribution->SetParameter(1,generateEta*fV1);
 
       pTrack->SetPhi(fPhiDistribution->GetRandom());
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
