@@ -218,13 +218,17 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       } // end of if(fPtDependentV2)  
 
 
-      // Eta-dependent v1 magic:
+      // Eta-dependent and charge-dependent v1 magic:
+      
       Double_t generateEta = gRandom->Uniform(fEtaMin,fEtaMax);
+      Int_t generateCharge = (gRandom->Integer(2)>0.5 ? 1 : -1);
+
       pTrack->SetEta(generateEta);
-      fPhiDistribution->SetParameter(1,generateEta*fV1);
+      pTrack->SetCharge(generateCharge);
+
+      fPhiDistribution->SetParameter(1,generateEta*generateCharge*fV1);
 
       pTrack->SetPhi(fPhiDistribution->GetRandom());
-      pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
 
 
       // Check uniform acceptance:
