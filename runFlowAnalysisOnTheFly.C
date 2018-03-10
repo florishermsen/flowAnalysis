@@ -13,7 +13,7 @@
 
 
 // Number of events
-Int_t iNevts = 100;
+Int_t iNevts = 2000;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
