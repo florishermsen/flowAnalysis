@@ -219,15 +219,10 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
 
       // Eta-dependent and charge-dependent v1 magic:
-      
-      Double_t generateEta = gRandom->Uniform(fEtaMin,fEtaMax);
-      Int_t generateCharge = (gRandom->Integer(2)>0.5 ? 1 : -1);
 
-      pTrack->SetEta(generateEta);
-      pTrack->SetCharge(generateCharge);
-
-      fPhiDistribution->SetParameter(1,generateEta*generateCharge*fV1);
-
+      pTrack->SetEta(gRandom->Uniform(fEtaMin,fEtaMax));
+      pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
+      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
 
 
