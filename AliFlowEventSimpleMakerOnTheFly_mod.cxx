@@ -201,7 +201,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    // d) Create event 'on the fly':
    AliFlowEventSimple *pEvent = new AliFlowEventSimple(iMult); 
    pEvent->SetReferenceMultiplicity(iMult);
-   pEvent->SetMCReactionPlaneAngle(dReactionPlane); 
+   pEvent->SetMCReactionPlaneAngle(dReactionPlane);
    Int_t nRPs = 0; // number of particles tagged RP in this event
    Int_t nPOIs = 0; // number of particles tagged POI in this event
    for(Int_t p=0;p<iMult;p++)
@@ -215,11 +215,10 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
             fPhiDistribution->SetParameter(2,pTrack->Pt()*fV2vsPtMax/fV2vsPtCutOff) :
             fPhiDistribution->SetParameter(2,fV2vsPtMax)
          );
-      } // end of if(fPtDependentV2)  
+      } // end of if(fPtDependentV2)
 
 
-      // Eta-dependent and charge-dependent v1 magic:
-
+      // Eta-dependent and charge-dependent v1:
       pTrack->SetEta(gRandom->Uniform(fEtaMin,fEtaMax));
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
       fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
@@ -263,6 +262,12 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    } // end of for(Int_t p=0;p<iMult;p++)
    pEvent->SetNumberOfRPs(fNTimes*nRPs);
    pEvent->SetNumberOfPOIs(fNTimes*nPOIs);
+
+   // introducing limited angular resolution
+   // set error on event plane angle after-the-fact for use in reconstruction
+   Double_t dReactionPlaneWithError = gRandom->Gaus(dReactionPlane, 0.628);
+   pEvent->SetMCReactionPlaneAngle(dReactionPlaneWithError);
+
 
    // e) Cosmetics for the printout on the screen:
    Int_t cycle = (fPtDependentV2 ? 10 : 100);
