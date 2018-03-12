@@ -107,6 +107,7 @@ class AliFlowAnalysisWithMCEventPlane_mod {
 
       // rapidity plotting range:
       void SetEtaPlotRange(Double_t const minEtaPlot, Double_t const maxEtaPlot) {this->fMinEtaPlot = minEtaPlot; this->fMaxEtaPlot = maxEtaPlot;};
+      void SetEtaBins(Int_t const etaBins) {this->fEtaBins = etaBins;};
 
       // mixed harmonics:
       // a) methods:
@@ -186,6 +187,7 @@ class AliFlowAnalysisWithMCEventPlane_mod {
       Double_t fXinPairAngle; // x in definition phi_{pair} = x*phi1+(1-x)*phi2
 
       // rapidity plotting range:
+      Int_t fEtaBins;
       Double_t fMinEtaPlot;
       Double_t fMaxEtaPlot;
                                           

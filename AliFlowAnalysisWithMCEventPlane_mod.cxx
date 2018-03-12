@@ -74,7 +74,8 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
    fMinCorrelator(2),
    fXinPairAngle(0.5),
    fMinEtaPlot(-2.),
-   fMaxEtaPlot(2.)
+   fMaxEtaPlot(2.),
+   fEtaBins(120)
 {
 
    // Constructor.
@@ -149,9 +150,10 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    Double_t dPtMin = AliFlowCommonConstants::GetMaster()->GetPtMin();       
    Double_t dPtMax = AliFlowCommonConstants::GetMaster()->GetPtMax();
 
-   Int_t iNbinsEta = AliFlowCommonConstants::GetMaster()->GetNbinsEta();
+   //Int_t iNbinsEta = AliFlowCommonConstants::GetMaster()->GetNbinsEta();
    //Double_t dEtaMin = AliFlowCommonConstants::GetMaster()->GetEtaMin();       
    //Double_t dEtaMax = AliFlowCommonConstants::GetMaster()->GetEtaMax();  
+   Int_t iNbinsEta = fEtaBins;
    Double_t dEtaMin = fMinEtaPlot;
    Double_t dEtaMax = fMaxEtaPlot;
 

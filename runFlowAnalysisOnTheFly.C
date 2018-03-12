@@ -13,22 +13,23 @@
 
 
 // Number of events
-Int_t iNevts = 100;
+Int_t iNevts = 10000;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
 
 // Set range for rapidity
-Double_t minEta = -1.;
-Double_t maxEta = 1.;
-Double_t minEtaPlot = -1.5;
-Double_t maxEtaPlot = 1.5;
+Double_t minEta = -.9;
+Double_t maxEta = .9;
+Double_t minEtaPlot = -.9;
+Double_t maxEtaPlot = .9;
+Int_t etaBins = 60;
 
 // Determine multiplicites of events:
 //    Remark 1: Multiplicity M for each event is sampled uniformly from interval iMinMult <= M < iMaxMult;
 //    Remark 2: For constant M of e.g. 500 for each event, set iMinMult = 500 and iMaxMult = 501.
-Int_t iMinMult = 1000; // uniformly sampled multiplicity is >= iMinMult
-Int_t iMaxMult = 1001; // uniformly sampled multiplicity is < iMaxMult
+Int_t iMinMult = 60; // uniformly sampled multiplicity is >= iMinMult
+Int_t iMaxMult = 61; // uniformly sampled multiplicity is < iMaxMult
 
 // Parametrize the phi distribution, enter dvn if vn is eta-dependent:
 Double_t dV1 = 0.0164; // constant harmonic v1
@@ -307,6 +308,7 @@ int runFlowAnalysisOnTheFly()
    {
       mcep = new AliFlowAnalysisWithMCEventPlane_mod();
       mcep->SetEtaPlotRange(minEtaPlot, maxEtaPlot);
+      mcep->SetEtaBins(etaBins);
       mcep->SetHarmonic(1);
       mcep->Init();
    } // end of if(MCEP)
