@@ -115,7 +115,6 @@ Bool_t useEtaWeights = kFALSE; // eta weights
 
 R__ADD_INCLUDE_PATH($ALICE_ROOT)
 R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
-R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
 
 #include "TStopwatch.h"
 #include "TObjArray.h"
@@ -124,8 +123,8 @@ R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
 
 #include "AliFlowEventSimpleMakerOnTheFly_mod.h"
 #include "AliFlowAnalysisWithMCEventPlane_mod.h"
-#include <AliFlowEventSimpleMakerOnTheFly_mod.cxx>
-#include <AliFlowAnalysisWithMCEventPlane_mod.cxx>
+#include "AliFlowEventSimpleMakerOnTheFly_mod.cxx"
+#include "AliFlowAnalysisWithMCEventPlane_mod.cxx"
 
 
 void CheckUserSettings()
