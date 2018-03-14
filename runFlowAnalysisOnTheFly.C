@@ -113,9 +113,6 @@ Bool_t usePhiWeights = kFALSE; // phi weights
 Bool_t usePtWeights  = kFALSE; // pt weights 
 Bool_t useEtaWeights = kFALSE; // eta weights
 
-R__ADD_INCLUDE_PATH($ALICE_ROOT)
-R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
-
 #include "TStopwatch.h"
 #include "TObjArray.h"
 #include "Riostream.h"
