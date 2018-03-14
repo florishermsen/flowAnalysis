@@ -13,7 +13,7 @@
 
 
 // Number of events
-Int_t iNevts = 10000;
+Int_t iNevts = 100;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -112,11 +112,20 @@ Double_t etaMaxB = 0.8; // maximum eta of subevent B
 Bool_t usePhiWeights = kFALSE; // phi weights
 Bool_t usePtWeights  = kFALSE; // pt weights 
 Bool_t useEtaWeights = kFALSE; // eta weights
-                                          
+
+R__ADD_INCLUDE_PATH($ALICE_ROOT)
+R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
+R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
+
 #include "TStopwatch.h"
 #include "TObjArray.h"
 #include "Riostream.h"
 #include "TFile.h"
+
+#include "AliFlowEventSimpleMakerOnTheFly_mod.h"
+#include "AliFlowAnalysisWithMCEventPlane_mod.h"
+#include <AliFlowEventSimpleMakerOnTheFly_mod.cxx>
+#include <AliFlowAnalysisWithMCEventPlane_mod.cxx>
 
 
 void CheckUserSettings()
@@ -212,19 +221,6 @@ void WelcomeMessage()
 
 } // end of void WelcomeMessage()
 
-void LoadLibraries() {
-  
-   R__ADD_INCLUDE_PATH($ALICE_ROOT)
-   R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
-   #include <AliFlowEventSimpleMakerOnTheFly_mod.cxx++>
-   #include <AliFlowAnalysisWithMCEventPlane_mod.cxx++>
-   cout<<endl;
-   cout<<endl;
-   cout<<" Custom macros compiled and loaded..."<<endl;
-   cout<<endl;
-  
-} // end of void LoadLibraries()
-
 int runFlowAnalysisOnTheFly()
 {
    // Beging analysis 'on the fly'.
@@ -241,7 +237,6 @@ int runFlowAnalysisOnTheFly()
 
    // a) Formal necessities....:
    CheckUserSettings();
-   LoadLibraries();
    WelcomeMessage();
    TStopwatch timer;
    timer.Start(); 
