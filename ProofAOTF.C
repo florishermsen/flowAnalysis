@@ -1,19 +1,33 @@
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-//////////                                         //////////
-//////////       runFlowAnalysisOnTheFly.c         //////////
-//////////                                         //////////
-//////////    Original macro by Ante Bilandzic     //////////
-//////////                                         //////////
-//////////   Adapted to ROOT6 by F.A.W. Hermsen    //////////
-//////////                                         //////////
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
+R__ADD_INCLUDE_PATH($ALICE_ROOT)
+R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
+R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
 
+//current file headers
+#include "ProofAOTF.h"
+#include "TH1F.h"
+#include "TRandom3.h"
+
+#include "TSelector.h"
+#include "TCanvas.h"
+#include "TStopwatch.h"
+#include "TObjArray.h"
+#include "TFile.h"
+#include "Riostream.h"
+
+//macro loading headers
+#include "TMacro.h"
+#include "TROOT.h"
+#include "TSystem.h"
+
+// macro specific
+#include "AliFlowEventSimpleMakerOnTheFly_mod.h"
+#include "AliFlowAnalysisWithMCEventPlane_mod.h"
+#include <AliFlowEventSimpleMakerOnTheFly_mod.cxx>
+#include <AliFlowAnalysisWithMCEventPlane_mod.cxx>
 
 
 // Number of events
-Int_t iNevts = 1000;
+Int_t iNevts = 100;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -46,11 +60,6 @@ Double_t dTemperature = 0.44; // "temperature" in GeV/c (increase this parameter
 
 // f) Determine how many times each sampled particle will be taken in the analysis (simulating nonflow):
 Int_t nTimes = 1; // e.g. for nTimes = 2, strong 2-particle nonflow correlations are introduced 
-
-// h) Decide which flow analysis methods you will use:
-Bool_t MCEP     = kTRUE; // Monte Carlo Event Plane
-
-
 
 
 // CURRENTLY IRRELEVANT PARAMETERS
@@ -113,134 +122,30 @@ Bool_t usePhiWeights = kFALSE; // phi weights
 Bool_t usePtWeights  = kFALSE; // pt weights 
 Bool_t useEtaWeights = kFALSE; // eta weights
 
-#include "TStopwatch.h"
-#include "TObjArray.h"
-#include "Riostream.h"
-#include "TFile.h"
-
-#include "AliFlowEventSimpleMakerOnTheFly_mod.h"
-#include "AliFlowAnalysisWithMCEventPlane_mod.h"
-#include "AliFlowEventSimpleMakerOnTheFly_mod.cxx"
-#include "AliFlowAnalysisWithMCEventPlane_mod.cxx"
-
-
-void CheckUserSettings()
+//_____________________________________________________________________________
+ProofAOTF::ProofAOTF()
 {
-   // Check if user settings make sense before taking off.
+   fH1F = NULL;
+   fRandom = NULL;
+   eventMakerOnTheFly = NULL;
+   mcep = NULL;
+   cutsRP = NULL;
+   cutsPOI = NULL;
+}
 
-   if(iNevts <= 0)
-   {
-      printf("\n WARNING: nEvts <= 0 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   } 
-   if(iMinMult < 0.)
-   {
-      printf("\n WARNING: iMinMult < 0 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(iMaxMult <= 0.)
-   {
-      printf("\n WARNING: iMaxMult <= 0 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(iMinMult >= iMaxMult)
-   {
-      printf("\n WARNING: iMinMult >= iMaxMult !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(dMass < 0.)
-   {
-      printf("\n WARNING: dMass < 0 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(dTemperature <= 1e-44)
-   {
-      printf("\n WARNING: dTemperature <= 0 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(TMath::Abs(dV1) > 0.5)
-   {
-      printf("\n WARNING: |dV1| > 0.5 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(TMath::Abs(dV2) > 0.5)
-   {
-      printf("\n WARNING: |dV2| > 0.5 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-   if(TMath::Abs(dV3) > 0.5)
-      {
-      printf("\n WARNING: |dV3| > 0.5 !!!! Please check your settings before taking off.\n\n");
-      exit(0);
-   }
-
-   if(!uniformAcceptance && phiMin1 > phiMax1)
-   {
-      cout<<" WARNING: You must have phiMin1 < phiMax1 !!!!"<<endl;
-      exit(0);
-   }
-   if(!uniformAcceptance && !((TMath::Abs(phiMin2) < 1.e-44) && (TMath::Abs(phiMax2) < 1.e-44) && (TMath::Abs(p2) < 1.e-44)) 
-      && (phiMin2 < phiMax1 || phiMin2 > phiMax2))
-   {
-      cout<<" WARNING: You must have phiMin2 > phiMax1 and phiMin2 < phiMax2 !!!!"<<endl;
-      exit(0);
-   }
-   if((phiMin1 < 0 || phiMin1 > 360) || (phiMax1 < 0 || phiMax1 > 360) || 
-      (phiMin2 < 0 || phiMin2 > 360) || (phiMax2 < 0 || phiMax2 > 360) )
-   {
-      cout<<" WARNING: You must take azimuthal angles from interval [0,360] !!!!"<<endl;
-      exit(0);
-   }
-   if((p1 < 0 || p1 > 1) || (p2 < 0 || p2 > 1))
-   {
-      cout<<" WARNING: you must take p1 and p2 from interval [0,1] !!!!"<<endl;
-      exit(0);
-   }
-} // end of void CheckUserSettings()
-
-void WelcomeMessage()
+//_____________________________________________________________________________
+ProofAOTF::~ProofAOTF()
 {
-   // Welcome.
-   cout<<endl;
-   cout<<endl;
-   cout<<"      ---- ARE YOU READY TO FLY ? ----      "<<endl;
-   cout<<endl;
- 
-   gSystem->Sleep(500);
+   if (fRandom) delete fRandom;
+}
 
-   cout<<endl;
-   cout<<" ---- BEGIN FLOW ANALYSIS 'ON THE FLY' ---- "<<endl;
-   cout<<endl;
-   cout<<endl;
+void ProofAOTF::Begin(TTree * ) { }
 
-   gSystem->Sleep(500);
-
-} // end of void WelcomeMessage()
-
-int runFlowAnalysisOnTheFly()
+void ProofAOTF::SlaveBegin(TTree * )
 {
-   // Beging analysis 'on the fly'.
-
-   // a) Formal necessities....;
-   // b) Initialize the flow event maker 'on the fly';
-   // c) If enabled, access particle weights from external file; 
-   // d) Configure the flow analysis methods;
-   // e) Simple cuts for RPs;
-   // f) Simple cuts for POIs;
-   // g) Create and analyse events 'on the fly'; 
-   // h) Create the output file and directory structure for the final results of all methods; 
-   // i) Calculate and store the final results of all methods.
-
-   // a) Formal necessities....:
-   CheckUserSettings();
-   WelcomeMessage();
-   TStopwatch timer;
-   timer.Start(); 
- 
-   // b) Initialize the flow event maker 'on the fly':
    UInt_t uiSeed = 0; // if uiSeed is 0, the seed is determined uniquely in space and time via TUUID
-   if(bSameSeed){uiSeed = 44;} 
-   AliFlowEventSimpleMakerOnTheFly_mod* eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
+   if(bSameSeed){uiSeed = 44;}
+   eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
    eventMakerOnTheFly->SetMinMult(iMinMult);
    eventMakerOnTheFly->SetMaxMult(iMaxMult); 
    eventMakerOnTheFly->SetMass(dMass);
@@ -253,7 +158,8 @@ int runFlowAnalysisOnTheFly()
    eventMakerOnTheFly->SetV3(dV6);
    eventMakerOnTheFly->SetEtaRange(minEta,maxEta);
    eventMakerOnTheFly->SetSubeventEtaRange(etaMinA,etaMaxA,etaMinB,etaMaxB); 
-   eventMakerOnTheFly->SetNTimes(nTimes); 
+   eventMakerOnTheFly->SetNTimes(nTimes);
+
    if(!uniformAcceptance)
    {
       eventMakerOnTheFly->SetUniformAcceptance(kFALSE);
@@ -283,29 +189,16 @@ int runFlowAnalysisOnTheFly()
       {
          listWithWeights = (TList*)fileWithWeights->Get("weights");
       }
-      else
-      {
-         cout << " WARNING: the file <weights.root> with weights from the previous run was not found."<<endl;
-         return 1;
-      }    
    } // end of if(usePhiWeights||usePtWeights||useEtaWeights) 
 
-   
-   // d) Configure the flow analysis methods:
-
-   // MCEP = monte carlo event plane
-   AliFlowAnalysisWithMCEventPlane_mod *mcep = NULL;
-   if(MCEP) 
-   {
-      mcep = new AliFlowAnalysisWithMCEventPlane_mod();
-      mcep->SetEtaPlotRange(minEtaPlot, maxEtaPlot);
-      mcep->SetEtaBins(etaBins);
-      mcep->SetHarmonic(1);
-      mcep->Init();
-   } // end of if(MCEP)
+   mcep = new AliFlowAnalysisWithMCEventPlane_mod();
+   mcep->SetEtaPlotRange(minEtaPlot, maxEtaPlot);
+   mcep->SetEtaBins(etaBins);
+   mcep->SetHarmonic(1);
+   mcep->Init();
 
    // e) Simple cuts for RPs: 
-   AliFlowTrackSimpleCuts *cutsRP = new AliFlowTrackSimpleCuts();
+   cutsRP = new AliFlowTrackSimpleCuts();
    cutsRP->SetPtMax(ptMaxRP);
    cutsRP->SetPtMin(ptMinRP);
    cutsRP->SetEtaMax(etaMaxRP);
@@ -315,7 +208,7 @@ int runFlowAnalysisOnTheFly()
    if(bUseChargeRP){cutsRP->SetCharge(chargeRP);}
 
    // f) Simple cuts for POIs: 
-   AliFlowTrackSimpleCuts *cutsPOI = new AliFlowTrackSimpleCuts();
+   cutsPOI = new AliFlowTrackSimpleCuts();
    cutsPOI->SetPtMax(ptMaxPOI);
    cutsPOI->SetPtMin(ptMinPOI);
    cutsPOI->SetEtaMax(etaMaxPOI);
@@ -323,19 +216,32 @@ int runFlowAnalysisOnTheFly()
    cutsPOI->SetPhiMax(phiMaxPOI*TMath::Pi()/180.);
    cutsPOI->SetPhiMin(phiMinPOI*TMath::Pi()/180.);
    if(bUseChargePOI){cutsPOI->SetCharge(chargePOI);}
-                                       
-   // g) Create and analyse events 'on the fly':
-   for(Int_t i=0;i<iNevts;i++) 
-   {   
-      // Creating the event 'on the fly':
-      AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI); 
-      // Passing the created event to flow analysis methods:
-      if(MCEP){mcep->Make(event);}
-      delete event;
-   } // end of for(Int_t i=0;i<iNevts;i++)
 
-   // h) Create the output file and directory structure for the final results of all methods: 
-   TString outputFileName = "AnalysisResults.root";  
+   fH1F = new TH1F("FirstH1F", "First TH1F in PROOF", 100, -10., 10.);
+   fOutput->Add(fH1F);
+
+   fRandom = new TRandom3(0);
+}
+
+Bool_t ProofAOTF::Process(Long64_t)
+{
+
+   AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI); 
+   // Passing the created event to flow analysis methods:
+   mcep->Make(event);
+   delete event;
+
+   if (fRandom && fH1F) {
+      Double_t x = fRandom->Gaus(0.,1.);
+      fH1F->Fill(x);
+   }
+
+   return kTRUE;
+}
+
+void ProofAOTF::SlaveTerminate()
+{
+   TString outputFileName = "~/alice/workspace/v1/AnalysisResults_PROOF.root";
    TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
    const Int_t nMethods = 1;
    TString method[] = {"MCEP"};
@@ -350,21 +256,19 @@ int runFlowAnalysisOnTheFly()
    }
  
    // i) Calculate and store the final results of all methods:
-   if(MCEP){mcep->Finish();mcep->WriteHistograms(dirFileFinal[0]);}
+   mcep->Finish();
+   //TList *fHistList = mcep->GetHistList();
+   mcep->WriteHistograms(dirFileFinal[0]);
  
    outputFile->Close();
    delete outputFile;
- 
-   cout<<endl;
-   cout<<endl;
-   cout<<" ---- LANDED SUCCESSFULLY ---- "<<endl;
-   cout<<endl; 
- 
-   timer.Stop();
-   cout << endl;
-   timer.Print();
-   cout << endl;
-   return 0;
+}
 
-} // end of int runFlowAnalysisOnTheFly()
+void ProofAOTF::Terminate()
+{
+   TCanvas *c1 = new TCanvas("c1", "Proof ProofAOTF canvas",200,10,400,400);
+   fH1F = dynamic_cast<TH1F*>(fOutput->FindObject("FirstH1F"));
+   if (fH1F) fH1F->Draw();
+   c1->Update();
+}
 
