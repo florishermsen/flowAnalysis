@@ -335,7 +335,7 @@ int runFlowAnalysisOnTheFly()
    } // end of for(Int_t i=0;i<iNevts;i++)
 
    // h) Create the output file and directory structure for the final results of all methods: 
-   TString outputFileName = "AnalysisResults.root";  
+   TString outputFileName = "results/AnalysisResults.root";  
    TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
    const Int_t nMethods = 1;
    TString method[] = {"MCEP"};
