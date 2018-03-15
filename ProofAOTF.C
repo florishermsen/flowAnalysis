@@ -1,33 +1,4 @@
-R__ADD_INCLUDE_PATH($ALICE_ROOT)
-R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
-R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
 
-//current file headers
-#include "ProofAOTF.h"
-#include "TH1F.h"
-#include "TRandom3.h"
-
-#include "TSelector.h"
-#include "TCanvas.h"
-#include "TStopwatch.h"
-#include "TObjArray.h"
-#include "TFile.h"
-#include "Riostream.h"
-
-//macro loading headers
-#include "TMacro.h"
-#include "TROOT.h"
-#include "TSystem.h"
-
-// macro specific
-#include "AliFlowEventSimpleMakerOnTheFly_mod.h"
-#include "AliFlowAnalysisWithMCEventPlane_mod.h"
-#include <AliFlowEventSimpleMakerOnTheFly_mod.cxx>
-#include <AliFlowAnalysisWithMCEventPlane_mod.cxx>
-
-
-// Number of events
-Int_t iNevts = 100;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -117,16 +88,44 @@ Double_t etaMaxA = -0.5; // maximum eta of subevent A
 Double_t etaMinB = 0.5; // minimum eta of subevent B
 Double_t etaMaxB = 0.8; // maximum eta of subevent B 
 
-// l) Enable/disable usage of particle weights:
-Bool_t usePhiWeights = kFALSE; // phi weights
-Bool_t usePtWeights  = kFALSE; // pt weights 
-Bool_t useEtaWeights = kFALSE; // eta weights
+
+R__ADD_INCLUDE_PATH($ALICE_ROOT)
+R__ADD_INCLUDE_PATH($ALICE_PHYSICS)
+R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
+
+#include <ctime>
+#include <string>
+
+//current file headers
+#include "ProofAOTF.h"
+#include "TH1F.h"
+#include "TProfile.h"
+#include "TRandom3.h"
+
+#include "TSelector.h"
+#include "TCanvas.h"
+#include "TStopwatch.h"
+#include "TObjArray.h"
+#include "TFile.h"
+#include "Riostream.h"
+
+//macro loading headers
+#include "TMacro.h"
+#include "TROOT.h"
+#include "TSystem.h"
+
+// macro specific
+#include "AliFlowEventSimpleMakerOnTheFly_mod.h"
+#include "AliFlowAnalysisWithMCEventPlane_mod.h"
+#include <AliFlowEventSimpleMakerOnTheFly_mod.cxx>
+#include <AliFlowAnalysisWithMCEventPlane_mod.cxx>
+
 
 //_____________________________________________________________________________
 ProofAOTF::ProofAOTF()
 {
-   fH1F = NULL;
-   fRandom = NULL;
+   fProfileRP = NULL;
+   fProfilePOI = NULL;
    eventMakerOnTheFly = NULL;
    mcep = NULL;
    cutsRP = NULL;
@@ -136,7 +135,10 @@ ProofAOTF::ProofAOTF()
 //_____________________________________________________________________________
 ProofAOTF::~ProofAOTF()
 {
-   if (fRandom) delete fRandom;
+   if (mcep) delete mcep;
+   if (cutsRP) delete cutsRP;
+   if (cutsPOI) delete cutsPOI;
+   if (eventMakerOnTheFly) delete eventMakerOnTheFly;
 }
 
 void ProofAOTF::Begin(TTree * ) { }
@@ -145,6 +147,7 @@ void ProofAOTF::SlaveBegin(TTree * )
 {
    UInt_t uiSeed = 0; // if uiSeed is 0, the seed is determined uniquely in space and time via TUUID
    if(bSameSeed){uiSeed = 44;}
+
    eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
    eventMakerOnTheFly->SetMinMult(iMinMult);
    eventMakerOnTheFly->SetMaxMult(iMaxMult); 
@@ -179,18 +182,6 @@ void ProofAOTF::SlaveBegin(TTree * )
    }
    eventMakerOnTheFly->Init();
 
-   // c) If enabled, access particle weights from external file: 
-   TFile *fileWithWeights = NULL;
-   TList *listWithWeights = NULL; 
-   if(usePhiWeights||usePtWeights||useEtaWeights) 
-   {
-      fileWithWeights = TFile::Open("weights.root","READ");
-      if(fileWithWeights) 
-      {
-         listWithWeights = (TList*)fileWithWeights->Get("weights");
-      }
-   } // end of if(usePhiWeights||usePtWeights||useEtaWeights) 
-
    mcep = new AliFlowAnalysisWithMCEventPlane_mod();
    mcep->SetEtaPlotRange(minEtaPlot, maxEtaPlot);
    mcep->SetEtaBins(etaBins);
@@ -217,58 +208,33 @@ void ProofAOTF::SlaveBegin(TTree * )
    cutsPOI->SetPhiMin(phiMinPOI*TMath::Pi()/180.);
    if(bUseChargePOI){cutsPOI->SetCharge(chargePOI);}
 
-   fH1F = new TH1F("FirstH1F", "First TH1F in PROOF", 100, -10., 10.);
-   fOutput->Add(fH1F);
-
-   fRandom = new TRandom3(0);
 }
 
 Bool_t ProofAOTF::Process(Long64_t)
 {
 
-   AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI); 
-   // Passing the created event to flow analysis methods:
+   AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI);
    mcep->Make(event);
    delete event;
-
-   if (fRandom && fH1F) {
-      Double_t x = fRandom->Gaus(0.,1.);
-      fH1F->Fill(x);
-   }
 
    return kTRUE;
 }
 
 void ProofAOTF::SlaveTerminate()
 {
-   TString outputFileName = "~/alice/workspace/v1/AnalysisResults_PROOF.root";
-   TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
-   const Int_t nMethods = 1;
-   TString method[] = {"MCEP"};
-   TDirectoryFile *dirFileFinal[nMethods] = {NULL};
-   TString fileName[nMethods]; 
-   for(Int_t i=0;i<nMethods;i++)
-   {
-      fileName[i]+="output";
-      fileName[i]+=method[i].Data();
-      fileName[i]+="analysis";
-      dirFileFinal[i] = new TDirectoryFile(fileName[i].Data(),fileName[i].Data());
-   }
- 
-   // i) Calculate and store the final results of all methods:
+
    mcep->Finish();
-   //TList *fHistList = mcep->GetHistList();
-   mcep->WriteHistograms(dirFileFinal[0]);
- 
-   outputFile->Close();
-   delete outputFile;
+
+   TList *fSlaveHistList = mcep->GetHistList();
+   fProfileRP = dynamic_cast<TProfile*>(fSlaveHistList->FindObject("FlowPro_VetaRP_MCEP"));
+   fProfilePOI = dynamic_cast<TProfile*>(fSlaveHistList->FindObject("FlowPro_VetaPOI_MCEP"));
+   
+   fOutput->Add(fProfileRP);
+   fOutput->Add(fProfilePOI);
 }
 
 void ProofAOTF::Terminate()
 {
-   TCanvas *c1 = new TCanvas("c1", "Proof ProofAOTF canvas",200,10,400,400);
-   fH1F = dynamic_cast<TH1F*>(fOutput->FindObject("FirstH1F"));
-   if (fH1F) fH1F->Draw();
-   c1->Update();
+   fOutput->Print();
 }
 

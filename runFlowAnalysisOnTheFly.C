@@ -13,7 +13,7 @@
 
 
 // Number of events
-Int_t iNevts = 1000;
+Int_t iNevts = 100;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -112,6 +112,9 @@ Double_t etaMaxB = 0.8; // maximum eta of subevent B
 Bool_t usePhiWeights = kFALSE; // phi weights
 Bool_t usePtWeights  = kFALSE; // pt weights 
 Bool_t useEtaWeights = kFALSE; // eta weights
+
+#include <ctime>
+#include <string>
 
 #include "TStopwatch.h"
 #include "TObjArray.h"
@@ -219,6 +222,7 @@ void WelcomeMessage()
 
 int runFlowAnalysisOnTheFly()
 {
+   
    // Beging analysis 'on the fly'.
 
    // a) Formal necessities....;
@@ -335,7 +339,7 @@ int runFlowAnalysisOnTheFly()
    } // end of for(Int_t i=0;i<iNevts;i++)
 
    // h) Create the output file and directory structure for the final results of all methods: 
-   TString outputFileName = "results/AnalysisResults.root";  
+   TString outputFileName = "results/AnalysisResults_"+to_string(time(0))+".root";  
    TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
    const Int_t nMethods = 1;
    TString method[] = {"MCEP"};

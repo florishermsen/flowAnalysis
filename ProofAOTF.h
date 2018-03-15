@@ -2,8 +2,7 @@
 #ifndef PROOFAOTF_H
 #define PROOFAOTF_H
 
-class TH1F;
-class TRandom;
+class TProfile;
 class TSelector;
 class AliFlowEventSimpleMakerOnTheFly_mod;
 class AliFlowAnalysisWithMCEventPlane_mod;
@@ -11,8 +10,9 @@ class AliFlowTrackSimpleCuts;
 class ProofAOTF : public TSelector {
 public :
 
-   TH1F *fH1F;
-   TRandom *fRandom;
+   TProfile *fProfileRP;
+   TProfile *fProfilePOI;
+   
    AliFlowEventSimpleMakerOnTheFly_mod *eventMakerOnTheFly;
    AliFlowAnalysisWithMCEventPlane_mod *mcep;
    AliFlowTrackSimpleCuts *cutsRP;
