@@ -235,6 +235,28 @@ void ProofAOTF::SlaveTerminate()
 
 void ProofAOTF::Terminate()
 {
-   fOutput->Print();
+   TString outputFileName = "results/ProofAnalysisResults_"+to_string(time(0))+".root";  
+   TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
+
+   TDirectoryFile *dirFileFinal = NULL;
+   TString fileName = "outputMCEPanalysis"; 
+   dirFileFinal = new TDirectoryFile(fileName.Data(),fileName.Data());
+
+   TList *fMasterHistList = new TList();
+   fProfileRP = dynamic_cast<TProfile*>(fOutput->FindObject("FlowPro_VetaRP_MCEP"));
+   fProfilePOI = dynamic_cast<TProfile*>(fOutput->FindObject("FlowPro_VetaPOI_MCEP"));
+   fMasterHistList->Add(fProfileRP);
+   fMasterHistList->Add(fProfilePOI);
+   
+   fMasterHistList->SetName("cobjMCEP");
+   dirFileFinal->Add(fMasterHistList);
+   dirFileFinal->Write(fMasterHistList->GetName(), TObject::kSingleKey);
+   
+   outputFile->Close();
+   delete outputFile;
 }
+
+
+
+
 
