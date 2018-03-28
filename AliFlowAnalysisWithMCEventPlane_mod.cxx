@@ -73,9 +73,12 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
    fNinCorrelator(2),
    fMinCorrelator(2),
    fXinPairAngle(0.5),
-   fMinEtaPlot(-2.),
-   fMaxEtaPlot(2.),
-   fEtaBins(120)
+   fEtaMin(-2.),
+   fEtaMax(2.),
+   fNbinsEta(120),
+   fPtMin(0),
+   fPtMax(10),
+   fNbinsPt(100)
 {
 
    // Constructor.
@@ -84,7 +87,7 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
    fQsum = new TVector2;        // flow vector sum
 
    fMixedHarmonicsList = new TList();
-   this->InitalizeArraysForMixedHarmonics();  
+   this->InitalizeArraysForMixedHarmonics();
 
    }
  
@@ -140,6 +143,16 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    //Define all histograms
    cout<<"---Analysis with the real MC Event Plane---"<<endl;
 
+   // setting custom plotting parameters for common control histograms
+
+   AliFlowCommonConstants::GetMaster()->SetEtaMin(fEtaMin);
+   AliFlowCommonConstants::GetMaster()->SetEtaMax(fEtaMax);
+   AliFlowCommonConstants::GetMaster()->SetNbinsEta(fNbinsEta);
+
+   AliFlowCommonConstants::GetMaster()->SetPtMin(fPtMin);
+   AliFlowCommonConstants::GetMaster()->SetPtMax(fPtMax);
+   AliFlowCommonConstants::GetMaster()->SetNbinsPt(fNbinsPt);
+
    //save old value and prevent histograms from being added to directory
    //to avoid name clashes in case multiple analaysis objects are used
    //in an analysis
@@ -150,12 +163,10 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    Double_t dPtMin = AliFlowCommonConstants::GetMaster()->GetPtMin();       
    Double_t dPtMax = AliFlowCommonConstants::GetMaster()->GetPtMax();
 
-   //Int_t iNbinsEta = AliFlowCommonConstants::GetMaster()->GetNbinsEta();
-   //Double_t dEtaMin = AliFlowCommonConstants::GetMaster()->GetEtaMin();       
-   //Double_t dEtaMax = AliFlowCommonConstants::GetMaster()->GetEtaMax();  
-   Int_t iNbinsEta = fEtaBins;
-   Double_t dEtaMin = fMinEtaPlot;
-   Double_t dEtaMax = fMaxEtaPlot;
+   Int_t iNbinsEta = AliFlowCommonConstants::GetMaster()->GetNbinsEta();
+   Double_t dEtaMin = AliFlowCommonConstants::GetMaster()->GetEtaMin();       
+   Double_t dEtaMax = AliFlowCommonConstants::GetMaster()->GetEtaMax();  
+
 
    fCommonHists = new AliFlowCommonHist("AliFlowCommonHistMCEP");
    fHistList->Add(fCommonHists);
@@ -567,8 +578,10 @@ void AliFlowAnalysisWithMCEventPlane_mod::BookObjectsForMixedHarmonics()
    TString pairCorrelatorVsMName = "fPairCorrelatorVsM";
    TString pairCorrelatorVsPtSumDiffName = "fPairCorrelatorVsPt";
    Int_t iNbinsPt = AliFlowCommonConstants::GetMaster()->GetNbinsPt();
-   Double_t dPtMin = AliFlowCommonConstants::GetMaster()->GetPtMin();      
-   Double_t dPtMax = AliFlowCommonConstants::GetMaster()->GetPtMax(); 
+   //Double_t dPtMin = AliFlowCommonConstants::GetMaster()->GetPtMin();      
+   //Double_t dPtMax = AliFlowCommonConstants::GetMaster()->GetPtMax(); 
+   Double_t dPtMin = 0.;      
+   Double_t dPtMax = 50.; 
    for(Int_t cs=0;cs<2;cs++)
    {
       fPairCorrelator[cs] = new TProfile(Form("%s, %s",pairCorrelatorName.Data(),cosSinFlag[cs].Data()),cosSinTitleFlag[cs].Data(),1,0.,1.);

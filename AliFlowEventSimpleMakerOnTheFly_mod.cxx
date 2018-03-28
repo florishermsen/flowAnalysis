@@ -42,40 +42,15 @@ AliFlowEventSimpleMakerOnTheFly_mod::AliFlowEventSimpleMakerOnTheFly_mod(UInt_t 
    fMinMult(0),
    fMaxMult(0),  
    fPtSpectra(NULL),
-   fMass(0.13957),
-   fTemperature(0.44),
    fPhiDistribution(NULL),
    fV1(0.),
    fV2(0.05),
-   fV3(0.),
-   fV4(0.),
-   fV5(0.),
-   fV6(0.),
-   fUniformFluctuationsV2(kFALSE),
-   fMinV2(0.04),
-   fMaxV2(0.06),
-   fPtDependentV2(kFALSE),
-   fV2vsPtCutOff(2.0),
-   fV2vsPtMax(0.2),
    fEtaMin(-1.),
    fEtaMax(1.),
-   fEtaMinA(-0.8),
-   fEtaMaxA(-0.5),
-   fEtaMinB(0.5),
-   fEtaMaxB(0.8),
-   fNTimes(1),
-   fUniformAcceptance(kTRUE),
-   fPhiMin1(0.),              
-   fPhiMax1(0.),             
-   fProbability1(0.),       
-   fPhiMin2(0.),   
-   fPhiMax2(0.),            
-   fProbability2(0.),     
+   fPtMin(0),
+   fPtMax(10.),
    fPi(TMath::Pi()),
-   fUniformEfficiency(kTRUE),
-   fPtMin(0.5),
-   fPtMax(1.0),
-   fPtProbability(0.75) 
+   fUniformEfficiency(kTRUE)
 {
    // Constructor.
   
@@ -106,55 +81,28 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    // b) Define the phi distribution.
 
    // a) Define the pt spectra:
-   Double_t dPtMin = 0.; 
-   Double_t dPtMax = 10.; 
-   fPtSpectra = new TF1("fPtSpectra","x*TMath::Exp(-pow([0]*[0]+x*x,0.5)/[1])",dPtMin,dPtMax); // hardwired is Boltzmann distribution  
-   fPtSpectra->SetParName(0,"Mass");
-   fPtSpectra->SetParameter(0,fMass);
-   fPtSpectra->SetParName(1,"Temperature");
-   fPtSpectra->SetParameter(1,fTemperature);
-   fPtSpectra->SetTitle("Boltzmann Distribution: f(p_{t}) = p_{t}exp[-(m^{2}+p_{t}^{2})^{1/2}/T];p_{t};f(p_{t})");
+   fPtSpectra = new TF1("fPtSpectra","TMath::Exp([0]*x)+[1]*(x^2)*TMath::Exp([2]*x)",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
+   fPtSpectra->SetParName(0,"Slope 1");
+   fPtSpectra->SetParameter(0,-0.173003);
+   fPtSpectra->SetParName(1,"Constant");
+   fPtSpectra->SetParameter(1,714.798);
+   fPtSpectra->SetParName(2,"Slope 2");
+   fPtSpectra->SetParameter(2,-1.42989);
+   fPtSpectra->SetTitle("D-meson Pt Distribution: f(p_{t}) = p_{t}exp[-0.867038];p_{t};f(p_{t})");
 
    // b) Define the phi distribution:
    Double_t dPhiMin = 0.; 
    Double_t dPhiMax = TMath::TwoPi();
-   fPhiDistribution = new TF1("fPhiDistribution","1+2.*[1]*TMath::Cos(x-[0])+2.*[2]*TMath::Cos(2.*(x-[0]))+2.*[3]*TMath::Cos(3.*(x-[0]))+2.*[4]*TMath::Cos(4.*(x-[0]))+2.*[5]*TMath::Cos(5.*(x-[0]))+2.*[6]*TMath::Cos(6.*(x-[0]))",dPhiMin,dPhiMax);
+   fPhiDistribution = new TF1("fPhiDistribution","1+2.*[1]*TMath::Cos(x-[0])+2.*[2]*TMath::Cos(2.*(x-[0]))",dPhiMin,dPhiMax);
    fPhiDistribution->SetParName(0,"Reaction Plane");
    fPhiDistribution->SetParameter(0,0.);
    fPhiDistribution->SetParName(1,"Directed Flow (v1)"); 
    fPhiDistribution->SetParameter(1,fV1);
    fPhiDistribution->SetParName(2,"Elliptic Flow (v2)");
    fPhiDistribution->SetParameter(2,fV2);
-   fPhiDistribution->SetParName(3,"Triangular Flow (v3)");
-   fPhiDistribution->SetParameter(3,fV3);
-   fPhiDistribution->SetParName(4,"Quadrangular Flow (v4)");
-   fPhiDistribution->SetParameter(4,fV4);
-   fPhiDistribution->SetParName(5,"Pentagonal Flow (v5)");
-   fPhiDistribution->SetParameter(5,fV5);
-   fPhiDistribution->SetParName(6,"Hexagonal Flow (v6)");
-   fPhiDistribution->SetParameter(6,fV6);
 
 } // end of void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
-//====================================================================================================================
-
-Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPhi(AliFlowTrackSimple *pTrack)
-{
-   // For the case of non-uniform acceptance determine in this method if particle is accepted or rejected for a given phi.
-
-   Bool_t bAccept = kTRUE;
-
-   if((pTrack->Phi() >= fPhiMin1*fPi/180.) && (pTrack->Phi() < fPhiMax1*fPi/180.) && gRandom->Uniform(0,1) > fProbability1) 
-   {
-      bAccept = kFALSE; // particle is rejected in the first non-uniform sector
-   } else if((pTrack->Phi() >= fPhiMin2*fPi/180.) && (pTrack->Phi() < fPhiMax2*fPi/180.) && gRandom->Uniform(0,1) > fProbability2) 
-   {
-      bAccept = kFALSE; // particle is rejected in the second non-uniform sector
-   }
-
-   return bAccept;
- 
-} // end of Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPhi(AliFlowTrackSimple *pTrack);
 
 //====================================================================================================================
 
@@ -162,12 +110,31 @@ Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPt(AliFlowTrackSimple *pTrack)
 {
    // For the case of non-uniform efficiency determine in this method if particle is accepted or rejected for a given pT.
 
+   Double_t efficiencyBins[13][2] = {  
+      {2.0, 0},
+      {3.0, 0.000767664},
+      {4.0, 0.00463984},
+      {5.0, 0.0153918},
+      {6.0, 0.0321692},
+      {7.0, 0.0528523},
+      {8.0, 0.0582403},
+      {10.0, 0.123859},
+      {12.0, 0.145762},
+      {16.0, 0.16983},
+      {24.0, 0.221823},
+      {36.0, 0.574282},
+      {50.0, 0.553414}
+   };
+
    Bool_t bAccept = kTRUE;
 
-   if((pTrack->Pt() >= fPtMin) && (pTrack->Pt() < fPtMax) && gRandom->Uniform(0,1) > fPtProbability) 
-   {
-      bAccept = kFALSE; // no mercy!
-   } 
+   for ( Int_t i = 0; i < 13; i++ ) {
+      if(pTrack->Pt() < efficiencyBins[i][0]) {
+         if(gRandom->Uniform(0,1) > efficiencyBins[i][1]) {
+            bAccept = kFALSE; // no mercy!
+         }
+      }
+   }
 
    return bAccept;
  
@@ -192,30 +159,21 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    Double_t dReactionPlane = gRandom->Uniform(0.,TMath::TwoPi());
    fPhiDistribution->SetParameter(0,dReactionPlane);
 
-   // c) If v2 fluctuates uniformly event-by-event, sample its value from [fMinV2,fMaxV2]:
-   if(fUniformFluctuationsV2)
-   {
-      fPhiDistribution->SetParameter(2,gRandom->Uniform(fMinV2,fMaxV2));
-   } 
-
    // d) Create event 'on the fly':
    AliFlowEventSimple *pEvent = new AliFlowEventSimple(iMult); 
    pEvent->SetReferenceMultiplicity(iMult);
    pEvent->SetMCReactionPlaneAngle(dReactionPlane);
+
    Int_t nRPs = 0; // number of particles tagged RP in this event
    Int_t nPOIs = 0; // number of particles tagged POI in this event
+
    for(Int_t p=0;p<iMult;p++)
    {
       AliFlowTrackSimple *pTrack = new AliFlowTrackSimple();
       pTrack->SetPt(fPtSpectra->GetRandom()); 
-      if(fPtDependentV2 && !fUniformFluctuationsV2)
-      {
-         // v2(pt): for pt < fV2vsPtCutOff v2 increases linearly, for pt >= fV2vsPtCutOff v2 = fV2vsPtMax
-         (pTrack->Pt() < fV2vsPtCutOff ? 
-            fPhiDistribution->SetParameter(2,pTrack->Pt()*fV2vsPtMax/fV2vsPtCutOff) :
-            fPhiDistribution->SetParameter(2,fV2vsPtMax)
-         );
-      } // end of if(fPtDependentV2)
+
+      // Check pT efficiency:
+      if(!fUniformEfficiency && !this->AcceptPt(pTrack)){continue;}
 
 
       // Eta-dependent and charge-dependent v1:
@@ -224,11 +182,6 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
 
-
-      // Check uniform acceptance:
-      if(!fUniformAcceptance && !this->AcceptPhi(pTrack)){continue;}
-      // Check pT efficiency:
-      if(!fUniformEfficiency && !this->AcceptPt(pTrack)){continue;}
       // Checking the RP cuts:     
       if(cutsRP->PassesCuts(pTrack))
       {
@@ -241,27 +194,11 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
          pTrack->TagPOI(kTRUE); 
          nPOIs++;
       }
-      // Assign particles to eta subevents (needed only for Scalar Product method):
-      if(pTrack->Eta()>=fEtaMinA && pTrack->Eta()<fEtaMaxA) 
-      {
-         pTrack->SetForSubevent(0);
-      }
-      if(pTrack->Eta()>=fEtaMinB && pTrack->Eta()<fEtaMaxB) 
-      {
-         pTrack->SetForSubevent(1);
-      }  
+      
       pEvent->AddTrack(pTrack);
-      // Simulating nonflow:
-      if(fNTimes>1)
-      {
-         for(Int_t nt=1;nt<fNTimes;nt++)
-         {
-            pEvent->AddTrack(pTrack->Clone());  
-         } 
-      } // end of if(fNTimes>1)       
    } // end of for(Int_t p=0;p<iMult;p++)
-   pEvent->SetNumberOfRPs(fNTimes*nRPs);
-   pEvent->SetNumberOfPOIs(fNTimes*nPOIs);
+   pEvent->SetNumberOfRPs(nRPs);
+   pEvent->SetNumberOfPOIs(nPOIs);
 
    // introducing limited angular resolution
    // set error on event plane angle after-the-fact for use in reconstruction
@@ -270,7 +207,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
 
    // e) Cosmetics for the printout on the screen:
-   Int_t cycle = (fPtDependentV2 ? 10 : 100);
+   Int_t cycle = 100;
    if((++fCount % cycle) == 0) 
    {
       if(TMath::Abs(dReactionPlane)>1.e-44) 
@@ -280,9 +217,9 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       {
          cout<<" MC Reaction Plane Angle is unknown :'( "<< endl;
       }     
-      cout<<" # of simulated tracks  = "<<fNTimes*iMult<<endl;
-      cout<<" # of RP tagged tracks  = "<<fNTimes*nRPs<<endl;
-      cout<<" # of POI tagged tracks = "<<fNTimes*nPOIs<<endl;  
+      cout<<" # of simulated tracks  = "<<iMult<<endl;
+      cout<<" # of RP tagged tracks  = "<<nRPs<<endl;
+      cout<<" # of POI tagged tracks = "<<nPOIs<<endl;  
       cout <<"  .... "<<fCount<< " events processed ...."<<endl;
    } // end of if((++fCount % cycle) == 0) 
 

@@ -106,8 +106,12 @@ class AliFlowAnalysisWithMCEventPlane_mod {
 
 
       // rapidity plotting range:
-      void SetEtaPlotRange(Double_t const minEtaPlot, Double_t const maxEtaPlot) {this->fMinEtaPlot = minEtaPlot; this->fMaxEtaPlot = maxEtaPlot;};
-      void SetEtaBins(Int_t const etaBins) {this->fEtaBins = etaBins;};
+      void SetEtaRange(Double_t const etaMin, Double_t const etaMax) {this->fEtaMin = etaMin; this->fEtaMax = etaMax;};
+      void SetNbinsEta(Int_t const nBinsEta) {this->fNbinsEta = nBinsEta;};
+
+      // transverse momentum plotting range:
+      void SetPtRange(Double_t const ptMin, Double_t const ptMax) {this->fPtMin = ptMin; this->fPtMax = ptMax;};
+      void SetNbinsPt(Int_t const nBinsPt) {this->fNbinsPt = nBinsPt;};
 
       // mixed harmonics:
       // a) methods:
@@ -186,10 +190,15 @@ class AliFlowAnalysisWithMCEventPlane_mod {
       Int_t fMinCorrelator; // m in <cos[m*phi_{pair}-n*RP]> and <sin[m*phi_{pair}-n*RP]>, where phi_{pair} = x*phi1+(1-x)*phi2   
       Double_t fXinPairAngle; // x in definition phi_{pair} = x*phi1+(1-x)*phi2
 
-      // rapidity plotting range:
-      Int_t fEtaBins;
-      Double_t fMinEtaPlot;
-      Double_t fMaxEtaPlot;
+      // rapidity plotting range and resolution:
+      Int_t fNbinsEta;
+      Double_t fEtaMin;
+      Double_t fEtaMax;
+
+      // transverse momentum plotting range and resolution:
+      Int_t fNbinsPt;
+      Double_t fPtMin;
+      Double_t fPtMax;
                                           
       ClassDef(AliFlowAnalysisWithMCEventPlane_mod,0)  // Analyse particle distribution versus MC reaction plane
   
