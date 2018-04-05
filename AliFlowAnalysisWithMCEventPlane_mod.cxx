@@ -87,6 +87,7 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
    fQsum = new TVector2;        // flow vector sum
 
    fMixedHarmonicsList = new TList();
+
    this->InitalizeArraysForMixedHarmonics();
 
    }
@@ -96,34 +97,8 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
 AliFlowAnalysisWithMCEventPlane_mod::~AliFlowAnalysisWithMCEventPlane_mod() 
 {
    //destructor
-   delete fHistList;
-   delete fQsum; 
-}
- 
-//-----------------------------------------------------------------------
-
-void AliFlowAnalysisWithMCEventPlane_mod::WriteHistograms(TString* outputFileName)
-{
-   //store the final results in output .root file
-   TFile *output = new TFile(outputFileName->Data(),"RECREATE");
-   //output->WriteObject(fHistList, "cobjMCEP","SingleKey");
-   fHistList->SetName("cobjMCEP");
-   fHistList->SetOwner(kTRUE);
-   fHistList->Write(fHistList->GetName(), TObject::kSingleKey);
-   delete output;
-}
-
-//-----------------------------------------------------------------------
-
-void AliFlowAnalysisWithMCEventPlane_mod::WriteHistograms(TString outputFileName)
-{
-   //store the final results in output .root file
-   TFile *output = new TFile(outputFileName.Data(),"RECREATE");
-   //output->WriteObject(fHistList, "cobjMCEP","SingleKey");
-   fHistList->SetName("cobjMCEP");
-   fHistList->SetOwner(kTRUE);
-   fHistList->Write(fHistList->GetName(), TObject::kSingleKey);
-   delete output;
+   //if(fHistList) delete fHistList;
+   if(fQsum) delete fQsum;
 }
 
 //-----------------------------------------------------------------------

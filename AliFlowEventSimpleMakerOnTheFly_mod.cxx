@@ -68,6 +68,7 @@ AliFlowEventSimpleMakerOnTheFly_mod::~AliFlowEventSimpleMakerOnTheFly_mod()
 
    if(fPtSpectra){delete fPtSpectra;}
    if(fPhiDistribution){delete fPhiDistribution;}
+   if(gRandom){delete gRandom;}
 
 } // end of AliFlowEventSimpleMakerOnTheFly_mod::~AliFlowEventSimpleMakerOnTheFly_mod() 
 
@@ -81,14 +82,10 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    // b) Define the phi distribution.
 
    // a) Define the pt spectra:
-   fPtSpectra = new TF1("fPtSpectra","TMath::Exp([0]*x)+[1]*(x^2)*TMath::Exp([2]*x)",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
-   fPtSpectra->SetParName(0,"Slope 1");
-   fPtSpectra->SetParameter(0,-0.173003);
-   fPtSpectra->SetParName(1,"Constant");
-   fPtSpectra->SetParameter(1,714.798);
-   fPtSpectra->SetParName(2,"Slope 2");
-   fPtSpectra->SetParameter(2,-1.42989);
-   fPtSpectra->SetTitle("D-meson Pt Distribution: f(p_{t}) = p_{t}exp[-0.867038];p_{t};f(p_{t})");
+   fPtSpectra = new TF1("fPtSpectra","[0]*x/(1+(x/([2]*sqrt(-1+2*[1])))^2)^[1]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
+   fPtSpectra->SetParameters(1.67867e9, 2.99844, 1);
+   fPtSpectra->SetParNames ("Constant","Exponent","Pt of Maximum");
+   fPtSpectra->SetTitle("D-meson Pt Distribution");
 
    // b) Define the phi distribution:
    Double_t dPhiMin = 0.; 
@@ -160,7 +157,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    fPhiDistribution->SetParameter(0,dReactionPlane);
 
    // d) Create event 'on the fly':
-   AliFlowEventSimple *pEvent = new AliFlowEventSimple(iMult); 
+   AliFlowEventSimple *pEvent = new AliFlowEventSimple(iMult);
    pEvent->SetReferenceMultiplicity(iMult);
    pEvent->SetMCReactionPlaneAngle(dReactionPlane);
 
@@ -170,10 +167,14 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    for(Int_t p=0;p<iMult;p++)
    {
       AliFlowTrackSimple *pTrack = new AliFlowTrackSimple();
+
       pTrack->SetPt(fPtSpectra->GetRandom()); 
 
       // Check pT efficiency:
-      if(!fUniformEfficiency && !this->AcceptPt(pTrack)){continue;}
+      if(!fUniformEfficiency && !this->AcceptPt(pTrack)) {
+         delete pTrack;
+         continue;
+      }
 
 
       // Eta-dependent and charge-dependent v1:
@@ -207,7 +208,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
 
    // e) Cosmetics for the printout on the screen:
-   Int_t cycle = 100;
+   Int_t cycle = 1000;
    if((++fCount % cycle) == 0) 
    {
       if(TMath::Abs(dReactionPlane)>1.e-44) 

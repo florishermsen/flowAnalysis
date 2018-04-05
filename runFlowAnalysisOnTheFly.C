@@ -12,7 +12,7 @@
 
 
 // Number of events
-Int_t iNevts = 100000;
+Int_t iNevts = 1000;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -118,7 +118,7 @@ int runFlowAnalysisOnTheFly()
    // b) Initialize the flow event maker 'on the fly':
    UInt_t uiSeed = 0; // if uiSeed is 0, the seed is determined uniquely in space and time via TUUID
    if(bSameSeed){uiSeed = 44;} 
-   AliFlowEventSimpleMakerOnTheFly_mod* eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
+   AliFlowEventSimpleMakerOnTheFly_mod *eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
    eventMakerOnTheFly->SetMinMult(iMinMult);
    eventMakerOnTheFly->SetMaxMult(iMaxMult); 
    eventMakerOnTheFly->SetV1(dV1);
@@ -129,8 +129,7 @@ int runFlowAnalysisOnTheFly()
    eventMakerOnTheFly->Init();
    
    // Configure the flow analysis method:
-   AliFlowAnalysisWithMCEventPlane_mod *mcep = NULL;
-   mcep = new AliFlowAnalysisWithMCEventPlane_mod();
+   AliFlowAnalysisWithMCEventPlane_mod *mcep = new AliFlowAnalysisWithMCEventPlane_mod();
    mcep->SetPtRange(minPt, maxPt);
    mcep->SetNbinsPt(ptBins);
    mcep->SetEtaRange(minEta, maxEta);
@@ -171,24 +170,24 @@ int runFlowAnalysisOnTheFly()
    // h) Create the output file and directory structure for the final results of all methods: 
    TString outputFileName = "results/AnalysisResults_"+to_string(time(0))+".root";  
    TFile *outputFile = new TFile(outputFileName.Data(),"RECREATE");
-   const Int_t nMethods = 1;
-   TString method[] = {"MCEP"};
-   TDirectoryFile *dirFileFinal[nMethods] = {NULL};
-   TString fileName[nMethods]; 
-   for(Int_t i=0;i<nMethods;i++)
-   {
-      fileName[i]+="output";
-      fileName[i]+=method[i].Data();
-      fileName[i]+="analysis";
-      dirFileFinal[i] = new TDirectoryFile(fileName[i].Data(),fileName[i].Data());
-   }
+   TDirectoryFile *dirFileFinal = NULL;
+   TString fileName="outputMCEPanalysis";
+   dirFileFinal = new TDirectoryFile(fileName.Data(),fileName.Data());
  
    // i) Calculate and store the final results of all methods:
    mcep->Finish();
-   mcep->WriteHistograms(dirFileFinal[0]);
+   mcep->WriteHistograms(dirFileFinal);
  
    outputFile->Close();
+
    delete outputFile;
+
+
+   if (mcep) delete mcep;
+   if (cutsRP) delete cutsRP;
+   if (cutsPOI) delete cutsPOI;
+   if (eventMakerOnTheFly) delete eventMakerOnTheFly;
+
  
    cout<<endl;
    cout<<endl;

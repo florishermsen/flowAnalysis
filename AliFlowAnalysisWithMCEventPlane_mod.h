@@ -37,8 +37,6 @@ class AliFlowAnalysisWithMCEventPlane_mod {
       AliFlowAnalysisWithMCEventPlane_mod();            //default constructor
       virtual  ~AliFlowAnalysisWithMCEventPlane_mod();  //destructor
 
-      void      WriteHistograms(TString* outputFileName);
-      void      WriteHistograms(TString outputFileName);
       void      WriteHistograms(TDirectoryFile *outputFileName);
       void      Init();                                       //defines variables and histograms
       void      Make(AliFlowEventSimple* anEvent);            //calculates variables and fills histograms

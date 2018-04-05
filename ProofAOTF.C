@@ -34,7 +34,7 @@ Double_t dV1 = 0.0164; // constant harmonic v1
 Double_t dV2 = 0.0; // constant harmonic v2
 
 // g2) Configure detector's efficiency:
-Bool_t uniformEfficiency = kFALSE; // if kTRUE: detectors has uniform pT efficiency
+Bool_t uniformEfficiency = kTRUE; // if kTRUE: detectors has uniform pT efficiency
                                   // if kFALSE: you will simulate detector with non-uniform pT efficiency. 
 
 
