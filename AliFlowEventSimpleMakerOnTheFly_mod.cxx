@@ -82,9 +82,9 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    // b) Define the phi distribution.
 
    // a) Define the pt spectra:
-   fPtSpectra = new TF1("fPtSpectra","[0]*x/(1+(x/([2]*sqrt(-1+2*[1])))^2)^[1]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
-   fPtSpectra->SetParameters(1.67867e9, 2.99844, 1);
-   fPtSpectra->SetParNames ("Constant","Exponent","Pt of Maximum");
+   fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
+   fPtSpectra->SetParameters(2.99844, 1);
+   fPtSpectra->SetParNames ("Exponent","Pt of Msaximum");
    fPtSpectra->SetTitle("D-meson Pt Distribution");
 
    // b) Define the phi distribution:
@@ -208,7 +208,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
 
    // e) Cosmetics for the printout on the screen:
-   Int_t cycle = 1000;
+   Int_t cycle = 100;
    if((++fCount % cycle) == 0) 
    {
       if(TMath::Abs(dReactionPlane)>1.e-44) 
