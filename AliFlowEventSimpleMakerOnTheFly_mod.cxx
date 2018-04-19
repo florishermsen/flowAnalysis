@@ -187,7 +187,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       // Eta-dependent and charge-dependent v1:
       pTrack->SetEta(fEtaDistribution->GetRandom());
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
-      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*pTrack->GetPt()*fV1);
+      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*pTrack->Pt()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
 
       // Checking the RP cuts:     
