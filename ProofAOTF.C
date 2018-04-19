@@ -47,8 +47,6 @@ R__ADD_INCLUDE_PATH($HOME/alice/workspace/v1)
 //_____________________________________________________________________________
 ProofAOTF::ProofAOTF()
 {
-   fProfileRP = NULL;
-   fProfilePOI = NULL;
    eventMakerOnTheFly = NULL;
    mcep = NULL;
    cutsRP = NULL;
@@ -127,11 +125,8 @@ void ProofAOTF::SlaveTerminate()
    mcep->Finish();
 
    TList *fSlaveHistList = mcep->GetHistList();
-   fProfileRP = dynamic_cast<TProfile*>(fSlaveHistList->FindObject("FlowPro_VetaRP_MCEP"));
-   fProfilePOI = dynamic_cast<TProfile*>(fSlaveHistList->FindObject("FlowPro_VetaPOI_MCEP"));
-   
-   fOutput->Add(fProfileRP);
-   fOutput->Add(fProfilePOI);
+   fSlaveHistList->SetName("cobjMCEP");
+   fOutput->Add(fSlaveHistList->Clone());
 }
 
 void ProofAOTF::Terminate()
@@ -142,16 +137,8 @@ void ProofAOTF::Terminate()
    TDirectoryFile *dirFileFinal = NULL;
    TString fileName = "outputMCEPanalysis"; 
    dirFileFinal = new TDirectoryFile(fileName.Data(),fileName.Data());
-
-   TList *fMasterHistList = new TList();
-   fProfileRP = dynamic_cast<TProfile*>(fOutput->FindObject("FlowPro_VetaRP_MCEP"));
-   fProfilePOI = dynamic_cast<TProfile*>(fOutput->FindObject("FlowPro_VetaPOI_MCEP"));
-   fMasterHistList->Add(fProfileRP);
-   fMasterHistList->Add(fProfilePOI);
-   
-   fMasterHistList->SetName("cobjMCEP");
-   dirFileFinal->Add(fMasterHistList);
-   dirFileFinal->Write(fMasterHistList->GetName(), TObject::kSingleKey);
+   dirFileFinal->Add(fOutput->FindObject("cobjMCEP")->Clone());
+   dirFileFinal->Write(fOutput->GetName(), TObject::kSingleKey);
    
    outputFile->Close();
    delete outputFile;
