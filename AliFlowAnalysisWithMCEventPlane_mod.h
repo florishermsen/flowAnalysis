@@ -80,7 +80,19 @@ class AliFlowAnalysisWithMCEventPlane_mod {
 
       TProfile* GetHistProDiffFlowEtaRP() const   {return this->fHistProDiffFlowEtaRP; } 
       void      SetHistProDiffFlowEtaRP(TProfile* const aHistProDiffFlowEtaRP) 
-        {this->fHistProDiffFlowEtaRP = aHistProDiffFlowEtaRP; } 
+        {this->fHistProDiffFlowEtaRP = aHistProDiffFlowEtaRP; }
+
+      TProfile* GetHistProDiffFlowEtaRPSubPt1() const   {return this->fHistDiffFlowEtaRPSubPt1; } 
+      void      SetHistProDiffFlowEtaRPSubPt1(TProfile* const aHistDiffFlowEtaRPSubPt1) 
+        {this->fHistDiffFlowEtaRPSubPt1 = aHistDiffFlowEtaRPSubPt1; }
+
+      TProfile* GetHistProDiffFlowEtaRPSubPt2() const   {return this->fHistDiffFlowEtaRPSubPt2; } 
+      void      SetHistProDiffFlowEtaRPSubPt2(TProfile* const aHistDiffFlowEtaRPSubPt2) 
+        {this->fHistDiffFlowEtaRPSubPt2 = aHistDiffFlowEtaRPSubPt2; }
+
+      TProfile* GetHistProDiffFlowEtaRPSubPt3() const   {return this->fHistDiffFlowEtaRPSubPt3; } 
+      void      SetHistProDiffFlowEtaRPSubPt3(TProfile* const aHistDiffFlowEtaRPSubPt3) 
+        {this->fHistDiffFlowEtaRPSubPt3 = aHistDiffFlowEtaRPSubPt3; }
         
       TProfile2D* GetHistProDiffFlowPtEtaPOI()const     {return this->fHistProDiffFlowPtEtaPOI; } 
       void      SetHistProDiffFlowPtEtaPOI(TProfile2D* const aHistProDiffFlowPtEtaPOI) 
@@ -92,7 +104,19 @@ class AliFlowAnalysisWithMCEventPlane_mod {
 
       TProfile* GetHistProDiffFlowEtaPOI()const   {return this->fHistProDiffFlowEtaPOI; } 
       void      SetHistProDiffFlowEtaPOI(TProfile* const aHistProDiffFlowEtaPOI) 
-        {this->fHistProDiffFlowEtaPOI = aHistProDiffFlowEtaPOI; } 
+        {this->fHistProDiffFlowEtaPOI = aHistProDiffFlowEtaPOI; }
+
+      TProfile* GetHistProDiffFlowEtaPOISubPt1() const   {return this->fHistDiffFlowEtaPOISubPt1; } 
+      void      SetHistProDiffFlowEtaPOISubPt1(TProfile* const aHistDiffFlowEtaPOISubPt1) 
+        {this->fHistDiffFlowEtaPOISubPt1 = aHistDiffFlowEtaPOISubPt1; }
+
+      TProfile* GetHistProDiffFlowEtaPOISubPt2() const   {return this->fHistDiffFlowEtaPOISubPt2; } 
+      void      SetHistProDiffFlowEtaPOISubPt2(TProfile* const aHistDiffFlowEtaPOISubPt2) 
+        {this->fHistDiffFlowEtaPOISubPt2 = aHistDiffFlowEtaPOISubPt2; }
+
+      TProfile* GetHistProDiffFlowEtaPOISubPt3() const   {return this->fHistDiffFlowEtaPOISubPt3; } 
+      void      SetHistProDiffFlowEtaPOISubPt3(TProfile* const aHistDiffFlowEtaPOISubPt3) 
+        {this->fHistDiffFlowEtaPOISubPt3 = aHistDiffFlowEtaPOISubPt3; }
         
       TH1D* GetHistSpreadOfFlow()const   {return this->fHistSpreadOfFlow; } 
       void      SetHistSpreadOfFlow(TH1D* const aHistSpreadOfFlow) 
@@ -168,9 +192,15 @@ class AliFlowAnalysisWithMCEventPlane_mod {
       TProfile2D*  fHistProDiffFlowPtEtaRP;  // profile used to calculate the differential flow (Pt,Eta) of RP particles
       TProfile*    fHistProDiffFlowPtRP;     // profile used to calculate the differential flow (Pt) of RP particles 
       TProfile*    fHistProDiffFlowEtaRP;    // profile used to calculate the differential flow (Eta) of RP particles 
+      TProfile*    fHistDiffFlowEtaRPSubPt1;
+      TProfile*    fHistDiffFlowEtaRPSubPt2;
+      TProfile*    fHistDiffFlowEtaRPSubPt3;
       TProfile2D*  fHistProDiffFlowPtEtaPOI; // profile used to calculate the differential flow (Pt,Eta) of POI particles
       TProfile*    fHistProDiffFlowPtPOI;    // profile used to calculate the differential flow (Pt) of POI particles 
       TProfile*    fHistProDiffFlowEtaPOI;   // profile used to calculate the differential flow (Eta) of POI particles
+      TProfile*    fHistDiffFlowEtaPOISubPt1;
+      TProfile*    fHistDiffFlowEtaPOISubPt2;
+      TProfile*    fHistDiffFlowEtaPOISubPt3;
       TH1D*        fHistSpreadOfFlow;        // histogram filled with reference flow calculated e-b-e    
       Int_t        fHarmonic;                // harmonic 
 

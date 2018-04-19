@@ -111,7 +111,7 @@ int runFlowAnalysisOnTheFly()
    for(Int_t i=0;i<iNevts;i++) 
    {   
       // Creating the event 'on the fly':
-      AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI); 
+      AliFlowEventSimple *event = eventMakerOnTheFly->CreateEventOnTheFly(cutsRP,cutsPOI);
       // Passing the created event to flow analysis methods:
       mcep->Make(event);
       delete event;

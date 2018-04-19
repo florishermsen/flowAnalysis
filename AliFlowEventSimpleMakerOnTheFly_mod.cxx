@@ -86,7 +86,7 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
    // a) Define the pt spectra:
    fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
-   fPtSpectra->SetParameters(2.82934, .26);
+   fPtSpectra->SetParameters(2.81719, .1);
    fPtSpectra->SetParNames("Exponent","Pt of Maximum");
    fPtSpectra->SetTitle("D-meson Pt Distribution");
 
@@ -136,6 +136,7 @@ Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPt(AliFlowTrackSimple *pTrack)
          if(gRandom->Uniform(0,1) > efficiencyBins[i][1]) {
             bAccept = kFALSE; // no mercy!
          }
+         break; //very important break statement, otherwise lose ALL low energy tracks
       }
    }
 
@@ -186,7 +187,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       // Eta-dependent and charge-dependent v1:
       pTrack->SetEta(fEtaDistribution->GetRandom());
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
-      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
+      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*pTrack->GetPt()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
 
       // Checking the RP cuts:     

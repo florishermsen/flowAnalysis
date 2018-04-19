@@ -59,9 +59,15 @@ AliFlowAnalysisWithMCEventPlane_mod::AliFlowAnalysisWithMCEventPlane_mod():
    fHistProDiffFlowPtEtaRP(NULL),
    fHistProDiffFlowPtRP(NULL),
    fHistProDiffFlowEtaRP(NULL),
+   fHistDiffFlowEtaRPSubPt1(NULL),
+   fHistDiffFlowEtaRPSubPt2(NULL),
+   fHistDiffFlowEtaRPSubPt3(NULL),
    fHistProDiffFlowPtEtaPOI(NULL),
    fHistProDiffFlowPtPOI(NULL),
    fHistProDiffFlowEtaPOI(NULL),
+   fHistDiffFlowEtaPOISubPt1(NULL),
+   fHistDiffFlowEtaPOISubPt2(NULL),
+   fHistDiffFlowEtaPOISubPt3(NULL),
    fHistSpreadOfFlow(NULL),
    fHarmonic(2),
    fMixedHarmonicsList(NULL),
@@ -180,8 +186,27 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
 
    fHistProDiffFlowEtaRP = new TProfile("FlowPro_VetaRP_MCEP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
    fHistProDiffFlowEtaRP->SetXTitle("#eta");
-   fHistProDiffFlowEtaRP->SetYTitle("v_{n}");
+   fHistProDiffFlowEtaRP->SetYTitle("v_{1}");
    fHistList->Add(fHistProDiffFlowEtaRP);
+
+
+   //start sub graphs for RP
+   fHistDiffFlowEtaRPSubPt1 = new TProfile("SubPt1_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaRPSubPt1->SetXTitle("#eta");
+   fHistDiffFlowEtaRPSubPt1->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaRPSubPt1);
+
+   fHistDiffFlowEtaRPSubPt2 = new TProfile("SubPt2_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaRPSubPt2->SetXTitle("#eta");
+   fHistDiffFlowEtaRPSubPt2->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaRPSubPt2);
+
+   fHistDiffFlowEtaRPSubPt3 = new TProfile("SubPt3_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaRPSubPt3->SetXTitle("#eta");
+   fHistDiffFlowEtaRPSubPt3->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaRPSubPt3);
+   //end sub graphs for RP
+
 
    fHistProDiffFlowPtEtaPOI = new TProfile2D("FlowPro_VPtEtaPOI_MCEP","FlowPro_VPtEtaPOI_MCEP",iNbinsPt,dPtMin,dPtMax,iNbinsEta,dEtaMin,dEtaMax);
    fHistProDiffFlowPtEtaPOI->SetXTitle("P_{t}");
@@ -193,10 +218,29 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    fHistProDiffFlowPtPOI->SetYTitle("");
    fHistList->Add(fHistProDiffFlowPtPOI);  
 
-   fHistProDiffFlowEtaPOI = new TProfile("FlowPro_VetaPOI_MCEP","FlowPro_VetaPOI_MCEP",iNbinsEta,dEtaMin,dEtaMax);
+   fHistProDiffFlowEtaPOI = new TProfile("FlowPro_VetaPOI_MCEP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
    fHistProDiffFlowEtaPOI->SetXTitle("#eta");
-   fHistProDiffFlowEtaPOI->SetYTitle("");
-   fHistList->Add(fHistProDiffFlowEtaPOI);         
+   fHistProDiffFlowEtaPOI->SetYTitle("v_{1}");
+   fHistList->Add(fHistProDiffFlowEtaPOI);
+
+   //start sub graphs for POI
+   fHistDiffFlowEtaPOISubPt1 = new TProfile("SubPt1_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaPOISubPt1->SetXTitle("#eta");
+   fHistDiffFlowEtaPOISubPt1->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaPOISubPt1);
+
+   fHistDiffFlowEtaPOISubPt2 = new TProfile("SubPt2_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaPOISubPt2->SetXTitle("#eta");
+   fHistDiffFlowEtaPOISubPt2->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaPOISubPt2);
+
+   fHistDiffFlowEtaPOISubPt3 = new TProfile("SubPt3_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+   fHistDiffFlowEtaPOISubPt3->SetXTitle("#eta");
+   fHistDiffFlowEtaPOISubPt3->SetYTitle("v_{1}");
+   fHistList->Add(fHistDiffFlowEtaPOISubPt3);
+   //end sub graphs for POI
+
+
 
    fHistSpreadOfFlow = new TH1D("fHistSpreadOfFlow","fHistSpreadOfFlow",1000,-1,1);
    fHistSpreadOfFlow->SetXTitle("v_{n}");
@@ -266,6 +310,14 @@ void AliFlowAnalysisWithMCEventPlane_mod::Make(AliFlowEventSimple* anEvent) {
                fHistProDiffFlowPtRP->Fill(dPt,dv,1.);
                //differential flow (Eta, RP):
                fHistProDiffFlowEtaRP->Fill(dEta,dv,1.);
+
+               if (dPt<4) {
+                  fHistDiffFlowEtaRPSubPt1->Fill(dEta,dv,1.);
+               } else if (dPt<8) {
+                  fHistDiffFlowEtaRPSubPt2->Fill(dEta,dv,1.);
+               } else {
+                  fHistDiffFlowEtaRPSubPt3->Fill(dEta,dv,1.);
+               }
             }
             if (pTrack->InPOISelection()) {
                dPhi = pTrack->Phi();
@@ -278,7 +330,15 @@ void AliFlowAnalysisWithMCEventPlane_mod::Make(AliFlowEventSimple* anEvent) {
                //differential flow (Pt, POI):
                fHistProDiffFlowPtPOI->Fill(dPt,dv,1.);
                //differential flow (Eta, POI):
-               fHistProDiffFlowEtaPOI->Fill(dEta,dv,1.); 
+               fHistProDiffFlowEtaPOI->Fill(dEta,dv,1.);
+
+               if (dPt<4) {
+                  fHistDiffFlowEtaPOISubPt1->Fill(dEta,dv,1.);
+               } else if (dPt<8) {
+                  fHistDiffFlowEtaPOISubPt2->Fill(dEta,dv,1.);
+               } else {
+                  fHistDiffFlowEtaPOISubPt3->Fill(dEta,dv,1.);
+               }
             }       
          }//track selected
       }//loop over tracks
@@ -316,6 +376,15 @@ void AliFlowAnalysisWithMCEventPlane_mod::GetOutputHistograms(TList *outputListH
      
       TProfile *pHistProDiffFlowEtaRP = dynamic_cast<TProfile*> 
          (outputListHistos->FindObject("FlowPro_VetaRP_MCEP"));
+
+      TProfile *pHistDiffFlowEtaRPSubPt1 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt1_Veta_RP"));
+
+      TProfile *pHistDiffFlowEtaRPSubPt2 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt2_Veta_RP"));
+
+      TProfile *pHistDiffFlowEtaRPSubPt3 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt3_Veta_RP"));
  
       TProfile2D *pHistProDiffFlowPtEtaPOI = dynamic_cast<TProfile2D*> 
          (outputListHistos->FindObject("FlowPro_VPtEtaPOI_MCEP")); 
@@ -324,7 +393,16 @@ void AliFlowAnalysisWithMCEventPlane_mod::GetOutputHistograms(TList *outputListH
          (outputListHistos->FindObject("FlowPro_VPtPOI_MCEP")); 
      
       TProfile *pHistProDiffFlowEtaPOI = dynamic_cast<TProfile*> 
-         (outputListHistos->FindObject("FlowPro_VetaPOI_MCEP"));                             
+         (outputListHistos->FindObject("FlowPro_VetaPOI_MCEP"));
+
+      TProfile *pHistDiffFlowEtaPOISubPt1 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt1_Veta_POI"));
+
+      TProfile *pHistDiffFlowEtaPOISubPt2 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt2_Veta_POI"));
+
+      TProfile *pHistDiffFlowEtaPOISubPt3 = dynamic_cast<TProfile*> 
+         (outputListHistos->FindObject("SubPt3_Veta_POI"));                        
 
       if (pCommonHists && pCommonHistResults && pHistProIntFlow && 
          pHistProDiffFlowPtRP && pHistProDiffFlowEtaRP && 
@@ -334,10 +412,16 @@ void AliFlowAnalysisWithMCEventPlane_mod::GetOutputHistograms(TList *outputListH
          this->SetHistProIntFlow(pHistProIntFlow);
          this->SetHistProDiffFlowPtEtaRP(pHistProDiffFlowPtEtaRP);
          this->SetHistProDiffFlowPtRP(pHistProDiffFlowPtRP);      
-         this->SetHistProDiffFlowEtaRP(pHistProDiffFlowEtaRP);  
+         this->SetHistProDiffFlowEtaRP(pHistProDiffFlowEtaRP);
+         this->SetHistProDiffFlowEtaRPSubPt1(pHistDiffFlowEtaRPSubPt1);
+         this->SetHistProDiffFlowEtaRPSubPt2(pHistDiffFlowEtaRPSubPt2);
+         this->SetHistProDiffFlowEtaRPSubPt3(pHistDiffFlowEtaRPSubPt3);
          this->SetHistProDiffFlowPtEtaPOI(pHistProDiffFlowPtEtaPOI);
          this->SetHistProDiffFlowPtPOI(pHistProDiffFlowPtPOI);      
-         this->SetHistProDiffFlowEtaPOI(pHistProDiffFlowEtaPOI);          
+         this->SetHistProDiffFlowEtaPOI(pHistProDiffFlowEtaPOI);      
+         this->SetHistProDiffFlowEtaPOISubPt1(pHistDiffFlowEtaPOISubPt1);
+         this->SetHistProDiffFlowEtaPOISubPt2(pHistDiffFlowEtaPOISubPt2);
+         this->SetHistProDiffFlowEtaPOISubPt3(pHistDiffFlowEtaPOISubPt3);
       } else {
          cout<<"WARNING: Histograms needed to run Finish() are not accessible!"<<endl;  }
     
