@@ -82,11 +82,11 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
    // a) Define the pt spectra;
    // b) Define the phi distribution.
-   // b) Define the eta distribution.
+   // c) Define the eta distribution.
 
    // a) Define the pt spectra:
    fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
-   fPtSpectra->SetParameters(2.99844, 1);
+   fPtSpectra->SetParameters(2.82934, .26);
    fPtSpectra->SetParNames("Exponent","Pt of Maximum");
    fPtSpectra->SetTitle("D-meson Pt Distribution");
 
@@ -101,7 +101,7 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    fPhiDistribution->SetParName(2,"Elliptic Flow (v2)");
    fPhiDistribution->SetParameter(2,fV2);
 
-   // c) Define the phi distribution:
+   // c) Define the eta distribution:
    fEtaDistribution = new TF1("fEtaDistribution","0.9+.1*x^2",fEtaMin,fEtaMax); // 10% dip around 0
 
 } // end of void AliFlowEventSimpleMakerOnTheFly_mod::Init()
@@ -178,7 +178,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
       // Check pT efficiency:
       if(!fUniformEfficiency && !this->AcceptPt(pTrack)) {
-         delete pTrack;
+         delete pTrack; // very important, otherwise mem leak
          continue;
       }
 

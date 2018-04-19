@@ -1,7 +1,7 @@
 
 
 // Number of events, only for non-PROOF
-Int_t iNevts = 10000;
+Int_t iNevts = 1000000;
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -19,15 +19,17 @@ Int_t etaBins = 60;  //bins for result histograms
 // Determine multiplicites of events:
 //    Remark 1: Multiplicity M for each event is sampled uniformly from interval iMinMult <= M < iMaxMult;
 //    Remark 2: For constant M of e.g. 500 for each event, set iMinMult = 500 and iMaxMult = 501.
-Int_t iMinMult = 60; // uniformly sampled multiplicity is >= iMinMult
-Int_t iMaxMult = 61; // uniformly sampled multiplicity is < iMaxMult
+Int_t iMinMult = 600; // uniformly sampled multiplicity is >= iMinMult
+Int_t iMaxMult = 601; // uniformly sampled multiplicity is < iMaxMult
 
 // Parametrize the phi distribution, enter dVn if vn is eta-dependent:
-Double_t dV1 = 0.0164; // constant harmonic v1
+//Double_t dV1 = 0.0164; // constant harmonic v1
+
+Double_t dV1 = .3;
 Double_t dV2 = 0.0; // constant harmonic v2
 
 // g2) Configure detector's efficiency:
-Bool_t uniformEfficiency = kTRUE; // if kTRUE: detectors has uniform pT efficiency
+Bool_t uniformEfficiency = kFALSE; // if kTRUE: detectors has uniform pT efficiency
                                   // if kFALSE: you will simulate detector with non-uniform pT efficiency. 
 
 

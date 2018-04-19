@@ -269,8 +269,7 @@ void AliFlowAnalysisWithMCEventPlane_mod::Make(AliFlowEventSimple* anEvent) {
             }
             if (pTrack->InPOISelection()) {
                dPhi = pTrack->Phi();
-               //if (dPhi<0.) dPhi+=2*TMath::Pi();
-               //calculate flow v2:
+               //calculate flow v1:
                dv  = TMath::Cos(fHarmonic*(dPhi-aRP));
                dPt  = pTrack->Pt();
                dEta = pTrack->Eta();
