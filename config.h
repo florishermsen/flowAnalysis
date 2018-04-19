@@ -23,9 +23,8 @@ Int_t iMinMult = 600; // uniformly sampled multiplicity is >= iMinMult
 Int_t iMaxMult = 601; // uniformly sampled multiplicity is < iMaxMult
 
 // Parametrize the phi distribution, enter dVn if vn is eta-dependent:
-//Double_t dV1 = 0.0164; // constant harmonic v1
 
-Double_t dV1 = .3;
+Double_t dV1 = 0.0164; // constant harmonic v1
 Double_t dV2 = 0.0; // constant harmonic v2
 
 // g2) Configure detector's efficiency:
