@@ -52,6 +52,7 @@ class AliFlowEventSimpleMakerOnTheFly_mod{
       Int_t fMaxMult; // uniformly sampled multiplicity is < iMaxMult
       TF1 *fPtSpectra; // transverse momentum distribution (pt is sampled from hardwired Boltzmann distribution)
       TF1 *fPhiDistribution; // azimuthal distribution (phi is sampled from hardwired Fourier-like distribution)
+      TF1 *fEtaDistribution; // rapidity distribution
       Double_t fV1; // harmonic v1
       Double_t fV2; // harmonic v2
       Double_t fEtaMin; // minimum eta

@@ -43,6 +43,7 @@ AliFlowEventSimpleMakerOnTheFly_mod::AliFlowEventSimpleMakerOnTheFly_mod(UInt_t 
    fMaxMult(0),  
    fPtSpectra(NULL),
    fPhiDistribution(NULL),
+   fEtaDistribution(NULL),
    fV1(0.),
    fV2(0.05),
    fEtaMin(-1.),
@@ -68,6 +69,7 @@ AliFlowEventSimpleMakerOnTheFly_mod::~AliFlowEventSimpleMakerOnTheFly_mod()
 
    if(fPtSpectra){delete fPtSpectra;}
    if(fPhiDistribution){delete fPhiDistribution;}
+   if(fEtaDistribution){delete fEtaDistribution;}
    if(gRandom){delete gRandom;}
 
 } // end of AliFlowEventSimpleMakerOnTheFly_mod::~AliFlowEventSimpleMakerOnTheFly_mod() 
@@ -80,11 +82,12 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
    // a) Define the pt spectra;
    // b) Define the phi distribution.
+   // b) Define the eta distribution.
 
    // a) Define the pt spectra:
    fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
    fPtSpectra->SetParameters(2.99844, 1);
-   fPtSpectra->SetParNames ("Exponent","Pt of Msaximum");
+   fPtSpectra->SetParNames("Exponent","Pt of Maximum");
    fPtSpectra->SetTitle("D-meson Pt Distribution");
 
    // b) Define the phi distribution:
@@ -97,6 +100,9 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    fPhiDistribution->SetParameter(1,fV1);
    fPhiDistribution->SetParName(2,"Elliptic Flow (v2)");
    fPhiDistribution->SetParameter(2,fV2);
+
+   // c) Define the phi distribution:
+   fEtaDistribution = new TF1("fEtaDistribution","0.9+.1*x^2",fEtaMin,fEtaMax); // 10% dip around 0
 
 } // end of void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
@@ -178,7 +184,7 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
 
       // Eta-dependent and charge-dependent v1:
-      pTrack->SetEta(gRandom->Uniform(fEtaMin,fEtaMax));
+      pTrack->SetEta(fEtaDistribution->GetRandom());
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
       fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
