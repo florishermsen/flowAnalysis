@@ -70,6 +70,7 @@ void ProofAOTF::SlaveBegin(TTree * )
    if(bSameSeed){uiSeed = 44;}
 
    eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
+   eventMakerOnTheFly->SetCClass(cClass);
    eventMakerOnTheFly->SetMinMult(iMinMult);
    eventMakerOnTheFly->SetMaxMult(iMaxMult); 
    eventMakerOnTheFly->SetV1(dV1);

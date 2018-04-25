@@ -1,3 +1,2 @@
 TProof *proofConstructor = TProof::Open("");
-proofConstructor->Process("ProofAOTF.C", 300000);
-new TBrowser();
+proofConstructor->Process("ProofAOTF.C", 450000);

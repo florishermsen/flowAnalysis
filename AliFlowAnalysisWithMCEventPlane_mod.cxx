@@ -311,11 +311,13 @@ void AliFlowAnalysisWithMCEventPlane_mod::Make(AliFlowEventSimple* anEvent) {
                //differential flow (Eta, RP):
                fHistProDiffFlowEtaRP->Fill(dEta,dv,1.);
 
-               if (dPt<4) {
+               if (dPt<3) {
                   fHistDiffFlowEtaRPSubPt1->Fill(dEta,dv,1.);
-               } else if (dPt<8) {
+               }
+               if (dPt>3) {
                   fHistDiffFlowEtaRPSubPt2->Fill(dEta,dv,1.);
-               } else {
+               }
+               if (dPt>5) {
                   fHistDiffFlowEtaRPSubPt3->Fill(dEta,dv,1.);
                }
             }
@@ -332,11 +334,13 @@ void AliFlowAnalysisWithMCEventPlane_mod::Make(AliFlowEventSimple* anEvent) {
                //differential flow (Eta, POI):
                fHistProDiffFlowEtaPOI->Fill(dEta,dv,1.);
 
-               if (dPt<4) {
+               if (dPt<3) {
                   fHistDiffFlowEtaPOISubPt1->Fill(dEta,dv,1.);
-               } else if (dPt<8) {
+               }
+               if (dPt>3) {
                   fHistDiffFlowEtaPOISubPt2->Fill(dEta,dv,1.);
-               } else {
+               }
+               if (dPt>5) {
                   fHistDiffFlowEtaPOISubPt3->Fill(dEta,dv,1.);
                }
             }       

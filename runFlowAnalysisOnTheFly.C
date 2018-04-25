@@ -69,6 +69,7 @@ int runFlowAnalysisOnTheFly()
    UInt_t uiSeed = 0; // if uiSeed is 0, the seed is determined uniquely in space and time via TUUID
    if(bSameSeed){uiSeed = 44;} 
    AliFlowEventSimpleMakerOnTheFly_mod *eventMakerOnTheFly = new AliFlowEventSimpleMakerOnTheFly_mod(uiSeed);
+   eventMakerOnTheFly->SetCClass(cClass);
    eventMakerOnTheFly->SetMinMult(iMinMult);
    eventMakerOnTheFly->SetMaxMult(iMaxMult); 
    eventMakerOnTheFly->SetV1(dV1);

@@ -31,6 +31,8 @@ class AliFlowEventSimpleMakerOnTheFly_mod{
       Bool_t AcceptPt(AliFlowTrackSimple *pTrack);  
       AliFlowEventSimple* CreateEventOnTheFly(AliFlowTrackSimpleCuts const *cutsRP, AliFlowTrackSimpleCuts const *cutsPOI); 
       // Setters and getters:
+      void SetCClass(Int_t dCClass) {this->fCClass = dCClass;}
+      Int_t GetCClass() const {return this->fCClass;} 
       void SetMinMult(Int_t iMinMult) {this->fMinMult = iMinMult;}
       Int_t GetMinMult() const {return this->fMinMult;} 
       void SetMaxMult(Int_t iMaxMult) {this->fMaxMult = iMaxMult;}
@@ -48,6 +50,7 @@ class AliFlowEventSimpleMakerOnTheFly_mod{
       AliFlowEventSimpleMakerOnTheFly_mod(const AliFlowEventSimpleMakerOnTheFly_mod& anAnalysis); // copy constructor
       AliFlowEventSimpleMakerOnTheFly_mod& operator=(const AliFlowEventSimpleMakerOnTheFly_mod& anAnalysis); // assignment operator
       Int_t fCount; // count number of events 
+      Int_t fCClass;
       Int_t fMinMult; // uniformly sampled multiplicity is >= iMinMult
       Int_t fMaxMult; // uniformly sampled multiplicity is < iMaxMult
       TF1 *fPtSpectra; // transverse momentum distribution (pt is sampled from hardwired Boltzmann distribution)
