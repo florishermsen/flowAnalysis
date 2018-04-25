@@ -190,22 +190,22 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    fHistList->Add(fHistProDiffFlowEtaRP);
 
 
-   //start sub graphs for RP
-   fHistDiffFlowEtaRPSubPt1 = new TProfile("SubPt1_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaRPSubPt1->SetXTitle("#eta");
-   fHistDiffFlowEtaRPSubPt1->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaRPSubPt1);
+      //start sub graphs for RP
+      fHistDiffFlowEtaRPSubPt1 = new TProfile("SubPt1_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaRPSubPt1->SetXTitle("#eta");
+      fHistDiffFlowEtaRPSubPt1->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaRPSubPt1);
 
-   fHistDiffFlowEtaRPSubPt2 = new TProfile("SubPt2_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaRPSubPt2->SetXTitle("#eta");
-   fHistDiffFlowEtaRPSubPt2->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaRPSubPt2);
+      fHistDiffFlowEtaRPSubPt2 = new TProfile("SubPt2_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaRPSubPt2->SetXTitle("#eta");
+      fHistDiffFlowEtaRPSubPt2->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaRPSubPt2);
 
-   fHistDiffFlowEtaRPSubPt3 = new TProfile("SubPt3_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaRPSubPt3->SetXTitle("#eta");
-   fHistDiffFlowEtaRPSubPt3->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaRPSubPt3);
-   //end sub graphs for RP
+      fHistDiffFlowEtaRPSubPt3 = new TProfile("SubPt3_Veta_RP","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaRPSubPt3->SetXTitle("#eta");
+      fHistDiffFlowEtaRPSubPt3->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaRPSubPt3);
+      //end sub graphs for RP
 
 
    fHistProDiffFlowPtEtaPOI = new TProfile2D("FlowPro_VPtEtaPOI_MCEP","FlowPro_VPtEtaPOI_MCEP",iNbinsPt,dPtMin,dPtMax,iNbinsEta,dEtaMin,dEtaMax);
@@ -223,22 +223,22 @@ void AliFlowAnalysisWithMCEventPlane_mod::Init() {
    fHistProDiffFlowEtaPOI->SetYTitle("v_{1}");
    fHistList->Add(fHistProDiffFlowEtaPOI);
 
-   //start sub graphs for POI
-   fHistDiffFlowEtaPOISubPt1 = new TProfile("SubPt1_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaPOISubPt1->SetXTitle("#eta");
-   fHistDiffFlowEtaPOISubPt1->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaPOISubPt1);
+      //start sub graphs for POI
+      fHistDiffFlowEtaPOISubPt1 = new TProfile("SubPt1_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaPOISubPt1->SetXTitle("#eta");
+      fHistDiffFlowEtaPOISubPt1->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaPOISubPt1);
 
-   fHistDiffFlowEtaPOISubPt2 = new TProfile("SubPt2_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaPOISubPt2->SetXTitle("#eta");
-   fHistDiffFlowEtaPOISubPt2->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaPOISubPt2);
+      fHistDiffFlowEtaPOISubPt2 = new TProfile("SubPt2_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaPOISubPt2->SetXTitle("#eta");
+      fHistDiffFlowEtaPOISubPt2->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaPOISubPt2);
 
-   fHistDiffFlowEtaPOISubPt3 = new TProfile("SubPt3_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
-   fHistDiffFlowEtaPOISubPt3->SetXTitle("#eta");
-   fHistDiffFlowEtaPOISubPt3->SetYTitle("v_{1}");
-   fHistList->Add(fHistDiffFlowEtaPOISubPt3);
-   //end sub graphs for POI
+      fHistDiffFlowEtaPOISubPt3 = new TProfile("SubPt3_Veta_POI","Directed Flow v_{1}(#eta)",iNbinsEta,dEtaMin,dEtaMax);
+      fHistDiffFlowEtaPOISubPt3->SetXTitle("#eta");
+      fHistDiffFlowEtaPOISubPt3->SetYTitle("v_{1}");
+      fHistList->Add(fHistDiffFlowEtaPOISubPt3);
+      //end sub graphs for POI
 
 
 

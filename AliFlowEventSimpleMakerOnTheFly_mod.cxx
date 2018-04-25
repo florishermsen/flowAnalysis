@@ -120,7 +120,6 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPt(AliFlowTrackSimple *pTrack)
 {
    // For the case of non-uniform efficiency determine in this method if particle is accepted or rejected for a given pT.
-
    
    Double_t efficiencyBins[3][13][2] = {{ //10-30
       {2, 0},

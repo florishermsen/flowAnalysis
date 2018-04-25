@@ -3,12 +3,13 @@
 // 0  10-30%
 // 1  30-50%
 // 2  50-80%
-Int_t cClass = 0;
+Int_t cClass = 1;
 
 // Number of events, only for non-PROOF
 Int_t iNevts = 10;
 
 
+/*
 // 10-30%
 // Determine multiplicites of events:
 //    Remark 1: Multiplicity M for each event is sampled uniformly from interval iMinMult <= M < iMaxMult;
@@ -20,18 +21,19 @@ Int_t iMaxMult = 60001; // uniformly sampled multiplicity is < iMaxMult
 Double_t dV1 = 0.036; // constant harmonic v1
 Double_t dV2 = 0.0; // constant harmonic v2
 
-/* 30-50%
-	iMinMult = 40000;
-	iMaxMult = 40001;
-	dV1 = 0.057;
-	dV2 = 0.0;
 */
 
+// 30-50%
+	Int_t iMinMult = 40000;
+	Int_t iMaxMult = 40001;
+	Double_t dV1 = 0.057;
+	Double_t dV2 = 0.0;
+
 /* 50-80%
-	iMinMult = 20000;
-	iMaxMult = 20001;
-	dV1 = 0.07;
-	dV2 = 0.0;
+	Int_t iMinMult = 20000;
+	Int_t iMaxMult = 20001;
+	Double_t dV1 = 0.07;
+	Double_t dV2 = 0.0;
 */
 
 // Toggle random or same seed for random generator
@@ -72,6 +74,7 @@ Double_t phiMaxPOI = 360.0; // in degrees
 Bool_t bUseChargePOI = kTRUE; // if kFALSE, POIs with both sign of charges are taken
 Int_t chargePOI = -1; // +1 or -1
 
-// Configure Pt cuts for extra pt-region v1 hists
+
+// Configure Pt cuts for extra pt-region v1 hists (not yet in macro)
 Bool_t ptSubHists = kTRUE;
 Double_t ptCutOffs[2] = {3,5};
