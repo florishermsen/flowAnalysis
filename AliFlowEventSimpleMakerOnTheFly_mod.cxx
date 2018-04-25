@@ -88,14 +88,13 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    // a) Define the pt spectra:
    fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
 
-   if(fCClass==0) {
-      fPtSpectra->SetParameters(2.87, .5); //10-30
-   } else if(fCClass==1) {
+   fPtSpectra->SetParameters(2.87, .5); //10-30
+   if(fCClass==1) {
       fPtSpectra->SetParameters(2.71, .84); //30-50
    } else if(fCClass==2) {
       fPtSpectra->SetParameters(2.92, 1.07); //50-80
    }
-   
+
    fPtSpectra->SetParNames("Exponent","Pt of Maximum");
    fPtSpectra->SetTitle("D-meson Pt Distribution");
 
@@ -122,65 +121,57 @@ Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPt(AliFlowTrackSimple *pTrack)
 {
    // For the case of non-uniform efficiency determine in this method if particle is accepted or rejected for a given pT.
 
-   if(fCClass==0) {
-      //10-30
-      Int_t nEffBins = 13;
-      Double_t efficiencyBins[13][2] = {
-         {2, 0},
-         {3, 0.000767664},
-         {4, 0.00463984},
-         {5, 0.0153918},
-         {6, 0.0321692},
-         {7, 0.0528523},
-         {8, 0.0582403},
-         {10, 0.123859},
-         {12, 0.145762},
-         {16, 0.16983},
-         {24, 0.221823},
-         {36, 0.574282},
-         {50, 0.553414},
-      };
-   } else if(fCClass==1) {
-      //30-50
-      Int_t nEffBins = 12;
-      Double_t efficiencyBins[12][2] = {
-         {2, 0},
-         {3, 0.00219054},
-         {4, 0.012685},
-         {5, 0.0190254},
-         {6, 0.0351793},
-         {7, 0.0726777},
-         {8, 0.0877877},
-         {10, 0.142911},
-         {12, 0.167198},
-         {16, 0.199494},
-         {24, 0.250309},
-         {36, 0.664265},
-      };
-   } else if(fCClass==2) {
-      //60-80
-      Int_t nEffBins = 12;
-      Double_t efficiencyBins[12][2] = {
-         {1, 0},
-         {2, 0.00134291},
-         {3, 0.0119252},
-         {4, 0.0249153},
-         {5, 0.0467732},
-         {6, 0.0523987},
-         {7, 0.110127},
-         {8, 0.152198},
-         {10, 0.188413},
-         {12, 0.302068},
-         {16, 0.558807},
-         {24, 0.653803},
-      };
-   }
+   
+   Double_t efficiencyBins[3][13][2] = {{ //10-30
+      {2, 0},
+      {3, 0.000767664},
+      {4, 0.00463984},
+      {5, 0.0153918},
+      {6, 0.0321692},
+      {7, 0.0528523},
+      {8, 0.0582403},
+      {10, 0.123859},
+      {12, 0.145762},
+      {16, 0.16983},
+      {24, 0.221823},
+      {36, 0.574282},
+      {50, 0.553414}
+   },{ //30-50
+      {2, 0},
+      {3, 0.00219054},
+      {4, 0.012685},
+      {5, 0.0190254},
+      {6, 0.0351793},
+      {7, 0.0726777},
+      {8, 0.0877877},
+      {10, 0.142911},
+      {12, 0.167198},
+      {16, 0.199494},
+      {24, 0.250309},
+      {36, 0.664265},
+      {50, 1}
+   },{ //50-80
+      {1, 0},
+      {2, 0.00134291},
+      {3, 0.0119252},
+      {4, 0.0249153},
+      {5, 0.0467732},
+      {6, 0.0523987},
+      {7, 0.110127},
+      {8, 0.152198},
+      {10, 0.188413},
+      {12, 0.302068},
+      {16, 0.558807},
+      {24, 0.653803},
+      {50, 1},
+      }
+   };
 
    Bool_t bAccept = kTRUE;
 
-   for ( Int_t i = 0; i < nEffBins; i++ ) {
-      if(pTrack->Pt() < efficiencyBins[i][0]) {
-         if(gRandom->Uniform(0,1) > efficiencyBins[i][1]) {
+   for ( Int_t i = 0; i < 13; i++ ) {
+      if(pTrack->Pt() < efficiencyBins[fCClass][i][0]) {
+         if(gRandom->Uniform(0,1) > efficiencyBins[fCClass][i][1]) {
             bAccept = kFALSE; // no mercy!
          }
          break; //very important break statement, otherwise lose ALL low energy tracks

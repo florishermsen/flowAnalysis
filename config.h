@@ -6,7 +6,7 @@
 Int_t cClass = 0;
 
 // Number of events, only for non-PROOF
-Int_t iNevts = 1;
+Int_t iNevts = 10;
 
 
 // 10-30%
