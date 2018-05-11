@@ -86,17 +86,23 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    // c) Define the eta distribution.
 
    // a) Define the pt spectra:
-   fPtSpectra = new TF1("fPtSpectra","x/(1+(x/([1]*sqrt(-1+2*[0])))^2)^[0]",fPtMin,fPtMax); // realistic d-meson spectrum, not accounted for detector efficiency
 
-   fPtSpectra->SetParameters(2.87, .5); //10-30
+   fPtSpectra = new TF1("fPtSpectra","[0]*x*sqrt(x^2+[1]^2)*(1+([2]-1)*sqrt(x^2+[1]^2)/[3])^(-[2]/([2]-1))*([4]+(0.85-[4])*(0.904269*exp(-0.22222*(-log(250)+log(x))^2)+0.227967*exp(-0.255102*(-log(3.5)+log(x))^2)*TMath::Erfc(2.02031*(-log(3.5)+log(x)))))",fPtMin,fPtMax); // realistic d-meson spectrum, WITH R_AA
+   
+   fPtSpectra->SetParameter(0, 8.4e8); // Scaling Constant
+   fPtSpectra->SetParameter(1, 1.86962); // D-Mass (GeV)
+   fPtSpectra->SetParameter(2, 1.17); // q-factor
+   fPtSpectra->SetParameter(3, 7.5e-2); // q-Temp
+
+   // Centrality Class Parameter
+   fPtSpectra->SetParameter(4, 0.2); //10-30
    if(fCClass==1) {
-      fPtSpectra->SetParameters(2.71, .84); //30-50
+      fPtSpectra->SetParameter(4, 0.42); //30-50
    } else if(fCClass==2) {
-      fPtSpectra->SetParameters(2.92, 1.07); //50-80
+      fPtSpectra->SetParameter(4, 0.45); //50-80
    }
 
-   fPtSpectra->SetParNames("Exponent","Pt of Maximum");
-   fPtSpectra->SetTitle("D-meson Pt Distribution");
+   fPtSpectra->SetParNames("Scaling Constant","D mass","Q-Factor","Q-Temperature");
 
    // b) Define the phi distribution:
    Double_t dPhiMin = 0.; 
@@ -149,7 +155,7 @@ Bool_t AliFlowEventSimpleMakerOnTheFly_mod::AcceptPt(AliFlowTrackSimple *pTrack)
       {24, 0.250309},
       {36, 0.664265},
       {50, 1}
-   },{ //50-80
+   },{ //60-80
       {1, 0},
       {2, 0.00134291},
       {3, 0.0119252},
@@ -226,8 +232,8 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
       pTrack->SetEta(fEtaDistribution->GetRandom());
       pTrack->SetCharge((gRandom->Integer(2)>0.5 ? 1 : -1));
 
-      Double_t currentV1 = fV1*(1-1/(0.5+pTrack->Pt()));
-      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*currentV1);
+      //Double_t currentV1 = fV1*(1-1/(0.5+pTrack->Pt())); // legacy code from pt-dependent v1
+      fPhiDistribution->SetParameter(1,pTrack->Eta()*pTrack->Charge()*fV1);
       pTrack->SetPhi(fPhiDistribution->GetRandom());
 
       // Checking the RP cuts:     

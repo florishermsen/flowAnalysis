@@ -1,2 +1,0 @@
-TProof *proofConstructor = TProof::Open("");
-proofConstructor->Process("ProofAOTF.C", 450000);

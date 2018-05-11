@@ -3,36 +3,37 @@
 // 0  10-30%
 // 1  30-50%
 // 2  50-80%
-Int_t cClass = 1;
+Int_t cClass = 0;
 
 // Number of events, only for non-PROOF
 Int_t iNevts = 10;
 
 
-/*
+
 // 10-30%
 // Determine multiplicites of events:
 //    Remark 1: Multiplicity M for each event is sampled uniformly from interval iMinMult <= M < iMaxMult;
 //    Remark 2: For constant M of e.g. 500 for each event, set iMinMult = 500 and iMaxMult = 501.
-Int_t iMinMult = 60000; // uniformly sampled multiplicity is >= iMinMult
-Int_t iMaxMult = 60001; // uniformly sampled multiplicity is < iMaxMult
+Int_t iMinMult = 2200; // uniformly sampled multiplicity is >= iMinMult
+Int_t iMaxMult = 2201; // uniformly sampled multiplicity is < iMaxMult
 
 // Parametrize the phi distribution, enter dVn if vn is eta-dependent:
-Double_t dV1 = 0.036; // constant harmonic v1
+Double_t dV1 = 0.0255; // constant harmonic v1
 Double_t dV2 = 0.0; // constant harmonic v2
 
-*/
 
+
+/*
 // 30-50%
-	Int_t iMinMult = 40000;
-	Int_t iMaxMult = 40001;
-	Double_t dV1 = 0.057;
+	Int_t iMinMult = 700;
+	Int_t iMaxMult = 701;
+	Double_t dV1 = 0.0411;
 	Double_t dV2 = 0.0;
 
-/* 50-80%
-	Int_t iMinMult = 20000;
-	Int_t iMaxMult = 20001;
-	Double_t dV1 = 0.07;
+// 50-80%
+	Int_t iMinMult = 70;
+	Int_t iMaxMult = 71;
+	Double_t dV1 = 0.0525;
 	Double_t dV2 = 0.0;
 */
 
