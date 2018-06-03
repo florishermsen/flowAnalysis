@@ -2,40 +2,25 @@
 // Define centrality class
 // 0  10-30%
 // 1  30-50%
-// 2  50-80%
-Int_t cClass = 0;
+// 2  60-80%
+Int_t cClass = 2;
 
 // Number of events, only for non-PROOF
-Int_t iNevts = 10;
+Int_t iNevts = 1000;
 
 
 
-// 10-30%
 // Determine multiplicites of events:
 //    Remark 1: Multiplicity M for each event is sampled uniformly from interval iMinMult <= M < iMaxMult;
 //    Remark 2: For constant M of e.g. 500 for each event, set iMinMult = 500 and iMaxMult = 501.
-Int_t iMinMult = 2200; // uniformly sampled multiplicity is >= iMinMult
-Int_t iMaxMult = 2201; // uniformly sampled multiplicity is < iMaxMult
+Int_t iMinMult = 81; // uniformly sampled multiplicity is >= iMinMult
+Int_t iMaxMult = 82; // uniformly sampled multiplicity is < iMaxMult
 
 // Parametrize the phi distribution, enter dVn if vn is eta-dependent:
-Double_t dV1 = 0.0255; // constant harmonic v1
+Double_t dV1 = 0.0221; // constant harmonic v1
 Double_t dV2 = 0.0; // constant harmonic v2
 
 
-
-/*
-// 30-50%
-	Int_t iMinMult = 700;
-	Int_t iMaxMult = 701;
-	Double_t dV1 = 0.0411;
-	Double_t dV2 = 0.0;
-
-// 50-80%
-	Int_t iMinMult = 70;
-	Int_t iMaxMult = 71;
-	Double_t dV1 = 0.0525;
-	Double_t dV2 = 0.0;
-*/
 
 // Toggle random or same seed for random generator
 Bool_t bSameSeed = kFALSE;
@@ -46,8 +31,8 @@ Double_t maxPt = 50.;
 Int_t ptBins = 50; //bins for result histograms
 
 // Set rapidity profile
-Double_t minEta = -.9;
-Double_t maxEta = .9;
+Double_t minEta = -.8;
+Double_t maxEta = .8;
 Int_t etaBins = 60;  //bins for result histograms
 
 // Configure detector's efficiency:

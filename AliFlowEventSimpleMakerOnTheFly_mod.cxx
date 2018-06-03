@@ -87,20 +87,21 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
    // a) Define the pt spectra:
 
-   fPtSpectra = new TF1("fPtSpectra","[0]*x*sqrt(x^2+[1]^2)*(1+([2]-1)*sqrt(x^2+[1]^2)/[3])^(-[2]/([2]-1))*([4]+(0.85-[4])*(0.904269*exp(-0.22222*(-log(250)+log(x))^2)+0.227967*exp(-0.255102*(-log(3.5)+log(x))^2)*TMath::Erfc(2.02031*(-log(3.5)+log(x)))))",fPtMin,fPtMax); // realistic d-meson spectrum, WITH R_AA
+   // Centrality Class - Dependent RAA
+   if(fCClass==0) {
+      fPtSpectra = new TF1("fPtSpectra","[0]*x*sqrt(x^2+[1]^2)*(1+([2]-1)*sqrt(x^2+[1]^2)/[3])^(-[2]/([2]-1))*(0.186179+0.730187*exp(-0.22222*(-log(250)+log(x))^2)+0.172795*exp(-0.27845*(-1.22378+log(x))^2)*TMath::Erfc(2.53292*(-1.22378+log(x))))",fPtMin,fPtMax); // realistic d-meson spectrum, WITH R_AA
+   } else if(fCClass==1) {
+      fPtSpectra = new TF1("fPtSpectra","[0]*x*sqrt(x^2+[1]^2)*(1+([2]-1)*sqrt(x^2+[1]^2)/[3])^(-[2]/([2]-1))*(0.264522+0.705465*exp(-0.154321*(-log(250)+log(x))^2)+0.172813*exp(-0.305176*(-1.19392+log(x))^2)*TMath::Erfc(2.20971*(-1.19392+log(x))))",fPtMin,fPtMax); // realistic d-meson spectrum, WITH R_AA
+   } else {
+      fPtSpectra = new TF1("fPtSpectra","[0]*x*sqrt(x^2+[1]^2)*(1+([2]-1)*sqrt(x^2+[1]^2)/[3])^(-[2]/([2]-1))*(0.596343+0.299838*exp(-0.154321*(-log(250)+log(x))^2)+0.0560588*exp(-0.78125*(-1.02962+log(x))^2)*TMath::Erfc(2.65165*(-1.02962+log(x))))",fPtMin,fPtMax); // realistic d-meson spectrum, WITH R_AA
+   }
    
+   fPtSpectra->SetNpx(400);
    fPtSpectra->SetParameter(0, 8.4e8); // Scaling Constant
    fPtSpectra->SetParameter(1, 1.86962); // D-Mass (GeV)
-   fPtSpectra->SetParameter(2, 1.17); // q-factor
+   fPtSpectra->SetParameter(2, 1.15); // q-factor
    fPtSpectra->SetParameter(3, 7.5e-2); // q-Temp
 
-   // Centrality Class Parameter
-   fPtSpectra->SetParameter(4, 0.2); //10-30
-   if(fCClass==1) {
-      fPtSpectra->SetParameter(4, 0.42); //30-50
-   } else if(fCClass==2) {
-      fPtSpectra->SetParameter(4, 0.45); //50-80
-   }
 
    fPtSpectra->SetParNames("Scaling Constant","D mass","Q-Factor","Q-Temperature");
 
@@ -108,6 +109,8 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    Double_t dPhiMin = 0.; 
    Double_t dPhiMax = TMath::TwoPi();
    fPhiDistribution = new TF1("fPhiDistribution","1+2.*[1]*TMath::Cos(x-[0])+2.*[2]*TMath::Cos(2.*(x-[0]))",dPhiMin,dPhiMax);
+   fPhiDistribution->SetNpx(100);
+
    fPhiDistribution->SetParName(0,"Reaction Plane");
    fPhiDistribution->SetParameter(0,0.);
    fPhiDistribution->SetParName(1,"Directed Flow (v1)"); 
@@ -116,7 +119,14 @@ void AliFlowEventSimpleMakerOnTheFly_mod::Init()
    fPhiDistribution->SetParameter(2,fV2);
 
    // c) Define the eta distribution:
-   fEtaDistribution = new TF1("fEtaDistribution","0.9+.1*x^2",fEtaMin,fEtaMax); // 10% dip around 0
+   fEtaDistribution = new TF1("fEtaDistribution","1+[0]*x^2",fEtaMin,fEtaMax); // % dip around 0
+
+   fEtaDistribution->SetParameter(0,0.056); //10-30
+   if(fCClass==1) {
+      fEtaDistribution->SetParameter(0,0.061); //30-50
+   } else if(fCClass==2) {
+      fEtaDistribution->SetParameter(0,0.074); //60-80
+   }
 
 } // end of void AliFlowEventSimpleMakerOnTheFly_mod::Init()
 
@@ -200,7 +210,9 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
    // e) Cosmetics for the printout on the screen.
 
    // a) Determine the multiplicity of an event:
-   Int_t iMult = (Int_t)gRandom->Uniform(fMinMult,fMaxMult);
+   //Int_t iMult = (Int_t)gRandom->Uniform(fMinMult,fMaxMult);
+   Int_t iMult = fMinMult;
+
 
    // b) Determine the reaction plane of an event:
    Double_t dReactionPlane = gRandom->Uniform(0.,TMath::TwoPi());
@@ -256,7 +268,12 @@ AliFlowEventSimple* AliFlowEventSimpleMakerOnTheFly_mod::CreateEventOnTheFly(Ali
 
    // introducing limited angular resolution
    // set error on event plane angle after-the-fact for use in reconstruction
-   Double_t dReactionPlaneWithError = gRandom->Gaus(dReactionPlane, 0.628);
+   Double_t dReactionPlaneWithError;
+   if(fCClass==2) {
+      Double_t dReactionPlaneWithError = gRandom->Gaus(dReactionPlane, 0.942);
+   } else {
+      Double_t dReactionPlaneWithError = gRandom->Gaus(dReactionPlane, 0.628);
+   }
    pEvent->SetMCReactionPlaneAngle(dReactionPlaneWithError);
 
 
